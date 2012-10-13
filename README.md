@@ -191,6 +191,7 @@ You must provide a JSON object containing a collection of key-value pairs. You c
 ### Example request
 
 POST http://kimberly.magic.ubc.ca/thingbroker-web/events/event/thing/123?keep-stored=true
+
 Content-type: application/JSON
 Body: {"video_url": "http://www.youtube.com/watch?v=Rku5Oyf-hYU"}
 
