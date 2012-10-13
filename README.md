@@ -24,7 +24,7 @@ You will either need Tomcat 6+ or a Springsource server to run Thing Broker. For
 
 # USAGE 
 
-The Thing Broker can be accessed through a RESTFul interface running on either Tomcat or a Springsource server, generally running on port 8080. On the examples below we will use an instance running on the server at "http://kimberly.magic.ubc.ca:8080". This will vary if you deployed your own instance. Currently, Thing Broker has only been implemented with JSON. That is, most data and "thing" definitions are accepted by the server only as JSON objects, and all responses will be in JSON format. 
+The Thing Broker can be accessed through a RESTFul interface running on either Tomcat or a Springsource server, generally running on port 8080. On the examples below we will use an instance running on the server at "http://kimberly.magic.ubc.ca". This will vary if you deployed your own instance. Currently, Thing Broker has only been implemented with JSON. That is, most data and "thing" definitions are accepted by the server only as JSON objects, and all responses will be in JSON format. 
 
 The Thing Broker abstract entities as "things" with a name, decription and type. "Things" can have state and events related to them. Generally, developers would register a "thing" with the Thing Broker, and add data, metadata or related events to it. Then if needed they would query this information using the REST API.
 
@@ -82,7 +82,7 @@ An "event" response is commonly represented by a collection of events ordered by
 You can use the publicly available endpoint of the Thing Broker at:
 
 ```
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/
+http://kimberly.magic.ubc.ca/thingbroker-web/
 ```
 
 If you are running your own instance exchange the location of the broker to your server. The following methods are available for creating and manipulating "things" on the Thing Broker.
@@ -93,7 +93,7 @@ This method creates a thing on the Thing Broker. There are no required JSON para
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/
+http://kimberly.magic.ubc.ca/thingbroker-web/thing/
 
 ### URL Parameters
 
@@ -108,7 +108,7 @@ http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/
+POST http://kimberly.magic.ubc.ca/thingbroker-web/thing/
 
 Content-type: application/JSON
 Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
@@ -132,7 +132,7 @@ This method will search for a thing on the current Thing Broker instance. It wil
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search
+http://kimberly.magic.ubc.ca/thingbroker-web/thing/search
 
 ### URL Parameters
 
@@ -148,10 +148,10 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?thingId=123
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?name=test
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?type=test
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?thingId=123&name=test
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?thingId=123
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?name=test
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?type=test
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?thingId=123&name=test
 
 
 ```
@@ -173,7 +173,7 @@ This method will add events to a thing,
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/events/event/thing/{thingId}
+http://kimberly.magic.ubc.ca/thingbroker-web/events/event/thing/{thingId}
 
 ### URL Parameters
 
@@ -187,7 +187,7 @@ You must provide a JSON object containing a collection of key-value pairs. You c
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca:8080/thingbroker-web/events/event/thing/123?keep-stored=true
+POST http://kimberly.magic.ubc.ca/thingbroker-web/events/event/thing/123?keep-stored=true
 Content-type: application/JSON
 Body: {"video_url": "http://www.youtube.com/watch?v=Rku5Oyf-hYU"}
 
@@ -209,7 +209,7 @@ This method will query events from a thing, responding with an ordered collectio
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/events/thing/{thingId}
+http://kimberly.magic.ubc.ca/events/thing/{thingId}
 
 ### URL Parameters
 
@@ -227,7 +227,7 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/events/thing/123
+GET http://kimberly.magic.ubc.ca/thingbroker-web/events/thing/123
 
 ```
 [
@@ -263,7 +263,7 @@ This method will retrieve a piece of content by the unique content ID. Such ID i
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/events/event/content/{contentId}
+http://kimberly.magic.ubc.ca/events/event/content/{contentId}
 
 ### URL Parameters
 
@@ -275,7 +275,7 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca:8080/events/event/content/9dafb29b-21c8-4266-a6d6-8fe5ae128470
+GET http://kimberly.magic.ubc.ca/events/event/content/9dafb29b-21c8-4266-a6d6-8fe5ae128470
 
 The server will respond with the file whose ID matches the provided id.
 
