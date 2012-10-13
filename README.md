@@ -148,10 +148,13 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?thingId=123 \n
-GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?name=test \n
-GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?type=test \n
-GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?thingId=123&name=test \n
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?thingId=123
+
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?name=test
+
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?type=test
+
+GET http://kimberly.magic.ubc.ca/thingbroker-web/thing/search?thingId=123&name=test
 
 
 ```
