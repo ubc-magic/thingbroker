@@ -126,6 +126,45 @@ Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"
 }
 ```
 
+## (PUT) - /thing/
+
+This method updates a thing on the Thing Broker. The only required JSON parameter is ThingId.
+
+### Resource URL
+
+http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+
+### URL Parameters
+
+ none
+
+### JSON Parameters
+
+     thingId: (required) Specifies an alpha-numeric id that identifies a thing
+     name: (not required) Specifies a thing's name.
+     description: (not required) Specifies a short description of the thing.
+     type: (not required) Specifies a user-defined thing type. Example Values: sensor, display, mobile.
+
+### Example request
+
+POST http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+
+Content-type: application/JSON
+Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
+
+```
+{
+    "thingId": "123",
+    "name": "test",
+    "description": "This is a thing",
+    "type": "Random thing",
+    "metadata": null,
+    "followers": [],
+    "following": [],
+    "state": null
+}
+```
+
 ## (GET) thing/search
 
 This method will search for a thing on the current Thing Broker instance. It will return a thing object.
