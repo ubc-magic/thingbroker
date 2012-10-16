@@ -147,10 +147,47 @@ http://kimberly.magic.ubc.ca/thingbroker-web/thing/
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+PUT http://kimberly.magic.ubc.ca/thingbroker-web/thing/
 
 Content-type: application/JSON
 Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
+
+```
+{
+    "thingId": "123",
+    "name": "test",
+    "description": "This is a thing",
+    "type": "Random thing",
+    "metadata": null,
+    "followers": [],
+    "following": [],
+    "state": null
+}
+```
+
+## (DELETE) - /thing/
+
+This method removes a thing and all its events from Thing Broker. 
+
+### Resource URL
+
+http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+
+### URL Parameters
+
+ thingId: (required) Specifies an alpha-numeric id that identifies a thing
+
+### JSON Parameters
+
+ none
+
+### Example request
+
+DELETE http://kimberly.magic.ubc.ca/thingbroker-web/thing/?thingId="123"
+
+Content-type: application/JSON
+
+**Response:** A JSON that represents the thing it was removed.
 
 ```
 {
