@@ -367,13 +367,13 @@ None
 
 Calling a service in thing broker can return a JSON representing a status message indicating an error that occurred. All status messages are composed by a status code and a text message. The status code can be:
 
-OK = 0;
-THING_NOT_FOUND = 1;
-THING_ALREADY_REGISTERED = 2;
-SENT_EVENT_TO_NON_EXISTENT_THING = 3;
-REQUESTER_NOT_INFORMED = 4;
-REQUESTER_NOT_REGISTERED = 5;
-INTERNAL_ERROR = 500;
+OK = 0
+THING_NOT_FOUND = 1
+THING_ALREADY_REGISTERED = 2
+SENT_EVENT_TO_NON_EXISTENT_THING = 3
+REQUESTER_NOT_INFORMED = 4
+REQUESTER_NOT_REGISTERED = 5
+INTERNAL_ERROR = 500
 
 ### Example of a status message
 
