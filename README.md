@@ -126,6 +126,82 @@ Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"
 }
 ```
 
+## (PUT) - /thing/
+
+This method updates a thing on the Thing Broker. The only required JSON parameter is ThingId.
+
+### Resource URL
+
+http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+
+### URL Parameters
+
+ none
+
+### JSON Parameters
+
+     thingId: (required) Specifies an alpha-numeric id that identifies a thing
+     name: (not required) Specifies a thing's name.
+     description: (not required) Specifies a short description of the thing.
+     type: (not required) Specifies a user-defined thing type. Example Values: sensor, display, mobile.
+
+### Example request
+
+PUT http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+
+Content-type: application/JSON
+Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
+
+```
+{
+    "thingId": "123",
+    "name": "test",
+    "description": "This is a thing",
+    "type": "Random thing",
+    "metadata": null,
+    "followers": [],
+    "following": [],
+    "state": null
+}
+```
+
+## (DELETE) - /thing/
+
+This method removes a thing and all its events from Thing Broker. 
+
+### Resource URL
+
+http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+
+### URL Parameters
+
+ thingId: (required) Specifies an alpha-numeric id that identifies a thing
+
+### JSON Parameters
+
+ none
+
+### Example request
+
+DELETE http://kimberly.magic.ubc.ca/thingbroker-web/thing/?thingId="123"
+
+Content-type: application/JSON
+
+**Response:** A JSON that represents the thing it was removed.
+
+```
+{
+    "thingId": "123",
+    "name": "test",
+    "description": "This is a thing",
+    "type": "Random thing",
+    "metadata": null,
+    "followers": [],
+    "following": [],
+    "state": null
+}
+```
+
 ## (GET) thing/search
 
 This method will search for a thing on the current Thing Broker instance. It will return a thing object.
@@ -285,5 +361,34 @@ The server will respond with the file whose ID matches the provided id.
 
 ```
 None
+```
+
+# Error Codes
+
+Calling a service in thing broker can return a JSON representing a status message indicating an error that occurred. All status messages are composed by a status code and a text message. The status code can be:
+
+OK = 0
+
+THING_NOT_FOUND = 1
+
+THING_ALREADY_REGISTERED = 2
+
+SENT_EVENT_TO_NON_EXISTENT_THING = 3
+
+REQUESTER_NOT_INFORMED = 4
+
+REQUESTER_NOT_REGISTERED = 5
+
+INTERNAL_ERROR = 500
+
+### Example of a status message
+
+```
+
+{
+"code": 1,
+"message": "Thing not found"
+}
+
 ```
 
