@@ -1,8 +1,7 @@
 package ca.ubc.magic.thingbroker.controller;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.ubc.magic.thingbroker.config.Constants;
+import ca.ubc.magic.thingbroker.controller.config.Constants;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
-import ca.ubc.magic.utils.Utils;
 
 @Controller
 @RequestMapping("/thing")
@@ -40,39 +38,69 @@ public class ThingController {
 	@RequestMapping(value = "/",method = RequestMethod.POST, consumes="application/json", produces = "application/json")
 	@ResponseBody
 	public Object registerThing(@RequestBody Thing thing) {
-		if(thing.getThingId() == null || thing.getThingId().equals("")) {
-		  thing.setThingId(UUID.randomUUID().toString());
+	    try {
+		   return thingService.storeThing(thing);
 		}
-		else {
-			Map<String, String> searchParam = new HashMap<String, String>();
-			searchParam.put("thingId",thing.getThingId());
-			Thing storedThing = thingService.getThing(searchParam);
-			if(storedThing != null) {
-			   return new StatusMessage(Constants.CODE_THING_ALREADY_REGISTERED, Utils.getMessage("THING_ALREADY_REGISTERED"));
-			}
-			thingService.storeThing(thing);
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
 		}
-		return thing;
+		catch(Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
 	}
 	
 	@RequestMapping(value = "/",method = RequestMethod.PUT, consumes="application/json", produces = "application/json")
 	@ResponseBody
 	public Object updateThing(@RequestBody Thing thing) {
-		Map<String, String> searchParam = new HashMap<String, String>();
-		searchParam.put("thingId",thing.getThingId());
-		Thing storedThing = thingService.getThing(searchParam);
-		if(storedThing != null) {
-		   thingService.storeThing(thing);
-		   return thing;
+		try {
+		   return thingService.update(thing);
 		}
-		return new StatusMessage(Constants.CODE_THING_NOT_FOUND, Utils.getMessage("THING_NOT_FOUND"));
+		catch(Exception ex) {
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR, ex.getMessage());
+		}
 	}
 	
 	@RequestMapping(value = "/search",method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public Thing retrieveThing(@RequestParam Map<String, String> params) {
-		return thingService.getThing(params);
+	public Object retrieveThing(@RequestParam Map<String, String> params) {
+        try {
+		  List<Thing> t = thingService.getThing(params);
+		  return (t != null) ? t : "{}";
+        }
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
 	}
+	
+	@RequestMapping(value = "/",method = RequestMethod.DELETE, consumes="application/json", produces = "application/json")
+	@ResponseBody
+	public Object removeThing(@RequestBody Thing thing) {
+		try {
+		  Thing t = thingService.delete(thing);
+		  return (t != null) ? t : "{}";
+		}
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
+	}	
 	
 	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -91,40 +119,49 @@ public class ThingController {
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_THING_NOT_FOUND,Constants.THING_NOT_FOUND_MESSAGE);
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_INTERNAL_SERVER_ERROR,ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
 		}
 	}
 	
-	@RequestMapping(value = "/{thingId}/follow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+/*	@RequestMapping(value = "/{thingId}/follow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public StatusMessage followThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
+	public Object followThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
 		try {
-		    thingService.followThings(new Thing(thingId), thingsToFollow);
+		    return thingService.followThings(new Thing(thingId), thingsToFollow);
+		}
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_THING_NOT_FOUND,Constants.THING_NOT_FOUND_MESSAGE);
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
 		}
-		return new StatusMessage(Constants.CODE_OK,Constants.FOLLOWING_REGISTRATION_SUCCESSFUL_MESSAGE);
 	}
+*/
 
 	@RequestMapping(value = "/{thingId}/unfollow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public StatusMessage unfollowThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
+	public Object unfollowThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
 		try {
-		    thingService.unfollowThings(new Thing(thingId), thingsToFollow);
+		    return thingService.unfollowThings(new Thing(thingId), thingsToFollow);
+		}
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_THING_NOT_FOUND,Constants.THING_NOT_FOUND_MESSAGE);
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
 		}
-		return new StatusMessage(Constants.CODE_OK,Constants.UNFOLLOWING_REGISTRATION_SUCCESSFUL_MESSAGE);
 	}
 }

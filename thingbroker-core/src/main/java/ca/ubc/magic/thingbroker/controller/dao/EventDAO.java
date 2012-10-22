@@ -1,8 +1,10 @@
 package ca.ubc.magic.thingbroker.controller.dao;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -38,35 +40,35 @@ public class EventDAO {
 		return mongoOperation.findOne(q, Event.class, "events");
 	}
 	
-	public static List<Event> retrieveEventsFromThing(Event event, Map<String, String> params) {
+	public static Set<Event> retrieveEventsFromThing(Event event, Map<String, String> params) {
 		if(params.size() == 0) {
 		  Query q = new Query(Criteria.where("thingId").is(event.getThingId())).limit(25); //It will provide a maximum of 25 events
 		  q.sort().on("serverTimestamp", Order.DESCENDING);
-		  return mongoOperation.find(q, Event.class,"events");
+		  return new LinkedHashSet<Event>(mongoOperation.find(q, Event.class,"events"));
 		}
 		if(params.get("limit") != null) {
 		  Query q = new Query(Criteria.where("thingId").is(event.getThingId())).limit(Integer.parseInt(params.get("limit")));
 		  q.sort().on("serverTimestamp", Order.DESCENDING);
-		  return mongoOperation.find(q, Event.class,"events");
+		  return new LinkedHashSet<Event>(mongoOperation.find(q, Event.class,"events"));
 		}
 		if(params.get("start") != null && params.get("end") != null) {
 		  Criteria c = new Criteria().andOperator(Criteria.where("thingId").is(event.getThingId()).and("serverTimestamp").gte(Long.parseLong(params.get("start"))),
 				  Criteria.where("thingId").is(event.getThingId()).and("serverTimestamp").lte(Long.parseLong(params.get("end"))));	
 		  Query q = new Query(c);
 		  q.sort().on("serverTimestamp", Order.DESCENDING);
-	      return mongoOperation.find(q, Event.class,"events");
+	      return new LinkedHashSet<Event>(mongoOperation.find(q, Event.class,"events"));
 		}
 		if(params.get("before") != null) {
 		   Query q = new Query(Criteria.where("thingId").is(event.getThingId()).and("serverTimestamp").lt(Long.parseLong(params.get("before"))));
 		   q.sort().on("serverTimestamp", Order.DESCENDING);
-		   return mongoOperation.find(q, Event.class,"events");
+		   return new LinkedHashSet<Event>(mongoOperation.find(q, Event.class,"events"));
 		}
 		if(params.get("after") != null) {
 			   Query q = new Query(Criteria.where("thingId").is(event.getThingId()).and("serverTimestamp").gt(Long.parseLong(params.get("after"))));
 			   q.sort().on("serverTimestamp", Order.DESCENDING);
-			   return mongoOperation.find(q, Event.class,"events");
+			   return new LinkedHashSet<Event>(mongoOperation.find(q, Event.class,"events"));
 		}
-		return new ArrayList<Event>();
+		return new LinkedHashSet<Event>();
 	}
 	
     public static void update(Event event) {
@@ -75,6 +77,11 @@ public class EventDAO {
     
     public static void delete(Event event) {
 		Query q = new Query(Criteria.where("eventId").is(event.getEventId()));
+		mongoOperation.remove(q, "events");
+    }
+    
+    public static void deleteFromThing(Event event) {
+		Query q = new Query(Criteria.where("thingId").is(event.getThingId()));
 		mongoOperation.remove(q, "events");
     }
     

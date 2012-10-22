@@ -10,5 +10,5 @@ public interface EventService {
    public Event create(Event event, EventData [] data, boolean mustSave);
    public void update(Event event, EventData [] data);
    public Event retrieve(Event event);
-   public List<Event> retrieveByCriteria(Event event, Map<String, String> params);
+   public List<Event> retrieveByCriteria(Event event, Map<String, String> params) throws Exception;
 }

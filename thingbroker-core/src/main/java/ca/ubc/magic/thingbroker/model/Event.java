@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 
-public class Event implements Serializable{
+public class Event implements Serializable, Comparable<Event>{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -66,5 +66,38 @@ public class Event implements Serializable{
 		return "Event [eventId=" + eventId + ", thingId=" + thingId
 				+ ", serverTimestamp=" + serverTimestamp + ", data=" + data
 				+ "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((eventId == null) ? 0 : eventId.hashCode());
+		result = prime * result + ((info == null) ? 0 : info.hashCode());
+		result = prime * result
+				+ ((serverTimestamp == null) ? 0 : serverTimestamp.hashCode());
+		result = prime * result + ((thingId == null) ? 0 : thingId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		Event other = (Event) obj;
+		if(this.eventId.equals(other.eventId)) {
+			return true;
+		}
+		return false;
+	}
+
+	public int compareTo(Event o) {
+		return this.serverTimestamp.compareTo(o.serverTimestamp) * -1;
 	}
 } 

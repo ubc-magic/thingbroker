@@ -14,11 +14,16 @@
 	<bean id="thingService" class="ca.ubc.magic.thingbroker.services.ThingServiceImpl"/>
 	<bean id="eventService" class="ca.ubc.magic.thingbroker.services.EventServiceImpl">
 	    <constructor-arg ref="jmsTemplate"/>
+	    <constructor-arg ref="realTimeEventService"/>
 	</bean>
 	
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="jmsFactory" />
  	</bean>
+ 	
+	<bean id="realTimeEventService" class="ca.ubc.magic.thingbroker.services.realtime.RealTimeEventServiceImpl">
+		<constructor-arg ref="connectionFactory"/>
+	</bean>
  	
 	<!-- ActiveMQ broker, connection factory, and pooled connection factory configuration -->
 	<bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory"

@@ -1,7 +1,7 @@
 package ca.ubc.magic.thingbroker.services.realtime;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -15,7 +15,6 @@ import javax.jms.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Follow;
 import ca.ubc.magic.utils.Utils;
@@ -61,10 +60,9 @@ public class JmsEventHandler implements MessageListener {
 		this.consumer = consumer;
 	}
 
-	public List<Event> getEvents(long waitTime) {
+	public Set<Event> getEvents(long waitTime) throws Exception {
 		if (messageQueue == null)
-			throw new ThingBrokerException(
-					"attempt to get events from an event handler subscription");
+			throw new Exception("attempt to get events from an event handler subscription");
 
 		Event newEvent = null;
 		try {
@@ -73,7 +71,7 @@ public class JmsEventHandler implements MessageListener {
 			logger.error("interrupted waiting for events", e);
 		}
 
-		ArrayList<Event> events = new ArrayList<Event>();
+		Set<Event> events = new LinkedHashSet<Event>();
 		if (newEvent != null) {
 			events.add(newEvent);
 		}
