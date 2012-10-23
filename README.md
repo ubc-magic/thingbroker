@@ -87,13 +87,13 @@ http://kimberly.magic.ubc.ca/thingbroker-web/
 
 If you are running your own instance exchange the location of the broker to your server. The following methods are available for creating and manipulating "things" on the Thing Broker.
 
-## (POST) - /thing/
+## (POST) - /thing
 
 This method creates a thing on the Thing Broker. There are no required JSON parameters, but you MUST provide an empty JSON object; that is, at least "{}"
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+http://kimberly.magic.ubc.ca/thingbroker-web/thing
 
 ### URL Parameters
 
@@ -108,7 +108,7 @@ http://kimberly.magic.ubc.ca/thingbroker-web/thing/
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+POST http://kimberly.magic.ubc.ca/thingbroker-web/thing
 
 Content-type: application/JSON
 Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
@@ -126,13 +126,13 @@ Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"
 }
 ```
 
-## (PUT) - /thing/
+## (PUT) - /thing
 
 This method updates a thing on the Thing Broker. The only required JSON parameter is ThingId.
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+http://kimberly.magic.ubc.ca/thingbroker-web/thing
 
 ### URL Parameters
 
@@ -147,7 +147,7 @@ http://kimberly.magic.ubc.ca/thingbroker-web/thing/
 
 ### Example request
 
-PUT http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+PUT http://kimberly.magic.ubc.ca/thingbroker-web/thing
 
 Content-type: application/JSON
 Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
@@ -165,13 +165,13 @@ Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"
 }
 ```
 
-## (DELETE) - /thing/
+## (DELETE) - /thing
 
 This method removes a thing and all its events from Thing Broker. 
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca/thingbroker-web/thing/
+http://kimberly.magic.ubc.ca/thingbroker-web/thing
 
 ### URL Parameters
 
@@ -183,7 +183,7 @@ http://kimberly.magic.ubc.ca/thingbroker-web/thing/
 
 ### Example request
 
-DELETE http://kimberly.magic.ubc.ca/thingbroker-web/thing/?thingId="123"
+DELETE http://kimberly.magic.ubc.ca/thingbroker-web/thing?thingId="123"
 
 Content-type: application/JSON
 
