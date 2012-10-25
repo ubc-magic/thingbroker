@@ -1,6 +1,7 @@
 package ca.ubc.magic.thingbroker.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ public class Thing implements Serializable{
 	public Thing() {
 		followers = new HashSet<String>();
 		following = new HashSet<String>();
+		metadata = new HashMap<String, Object>();
 	}
 	
 	public Thing(String thingId) {

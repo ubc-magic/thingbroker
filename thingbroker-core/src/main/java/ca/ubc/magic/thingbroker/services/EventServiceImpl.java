@@ -70,8 +70,10 @@ public class EventServiceImpl implements EventService {
 
 	public List<Event> retrieveByCriteria(Event event,Map<String, String> params) throws Exception {
 		String requester = params.get("requester");
+		String timeout = params.get("timeout");
 		if(requester != null) {
 			params.remove("requester");
+			params.remove("timeout");
 			Map<String, String> searchParam = new HashMap<String, String>();
 			searchParam.put("thingId", requester);
 			List<Thing> req = ThingDAO.retrieve(searchParam);
@@ -87,7 +89,13 @@ public class EventServiceImpl implements EventService {
 					}
 				}
 				long followingId = realTimeEventService.follow(event.getThingId());
-				Set<Event> realTimeEvents = realTimeEventService.getEvents(followingId, Constants.REAL_TIME_EVENTS_WAITING_TIME);
+				Set<Event> realTimeEvents = null;
+				if(timeout != null) {
+				   realTimeEvents = realTimeEventService.getEvents(followingId, Long.valueOf(timeout));
+				}
+				else {
+				   realTimeEvents = realTimeEventService.getEvents(followingId, Constants.REAL_TIME_EVENTS_WAITING_TIME);					
+				}
 				Set<Event> storedEvents = EventDAO.retrieveEventsFromThing(event, params); //Using set to avoid duplicates
 				List<Event> response = new ArrayList<Event>();
 				if(storedEvents != null) {

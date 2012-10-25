@@ -18,6 +18,7 @@ import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
+import ca.ubc.magic.utils.Utils;
 
 @Controller
 @RequestMapping("/thing")
@@ -35,7 +36,7 @@ public class ThingController {
 		this.thingService = thingService;
 	}
 	
-	@RequestMapping(value = "/",method = RequestMethod.POST, consumes="application/json", produces = "application/json")
+	@RequestMapping(method = RequestMethod.POST, consumes="application/json", produces = "application/json")
 	@ResponseBody
 	public Object registerThing(@RequestBody Thing thing) {
 	    try {
@@ -53,7 +54,7 @@ public class ThingController {
 		}
 	}
 	
-	@RequestMapping(value = "/",method = RequestMethod.PUT, consumes="application/json", produces = "application/json")
+	@RequestMapping(method = RequestMethod.PUT, consumes="application/json", produces = "application/json")
 	@ResponseBody
 	public Object updateThing(@RequestBody Thing thing) {
 		try {
@@ -69,13 +70,11 @@ public class ThingController {
 	public Object retrieveThing(@RequestParam Map<String, String> params) {
         try {
 		  List<Thing> t = thingService.getThing(params);
-		  return (t != null) ? t : "{}";
+		  if(t != null) {
+			  return t;
+		  }
+		  return new StatusMessage(Constants.CODE_THING_NOT_FOUND, Utils.getMessage("THING_NOT_FOUND"));
         }
-		catch(ThingBrokerException ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
-		}
 		catch(Exception ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
@@ -83,7 +82,7 @@ public class ThingController {
 		}
 	}
 	
-	@RequestMapping(value = "/",method = RequestMethod.DELETE, consumes="application/json", produces = "application/json")
+	@RequestMapping(method = RequestMethod.DELETE, consumes="application/json", produces = "application/json")
 	@ResponseBody
 	public Object removeThing(@RequestBody Thing thing) {
 		try {

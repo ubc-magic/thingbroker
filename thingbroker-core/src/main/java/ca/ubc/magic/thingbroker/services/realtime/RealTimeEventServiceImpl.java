@@ -54,6 +54,7 @@ public class RealTimeEventServiceImpl implements RealTimeEventService,Disposable
 	private long doFollow(String thingId, String url, EventHandler eventHandler) {
 		Follow follow = new Follow();
 		follow.setId(nextId + 1);
+		nextId++;
 		List<String> followers = new ArrayList<String>();
 		followers.add(thingId);
 		follow.setFollowers(followers);
@@ -69,7 +70,6 @@ public class RealTimeEventServiceImpl implements RealTimeEventService,Disposable
 			logger.error(e.getMessage());
 			throw new ThingBrokerException("JMS Exception occurred when subscribing", e);
 		}
-		nextId++;
 		return follow.getId();
 	}
 

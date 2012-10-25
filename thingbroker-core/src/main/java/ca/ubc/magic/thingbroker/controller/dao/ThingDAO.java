@@ -1,6 +1,5 @@
 package ca.ubc.magic.thingbroker.controller.dao;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,12 +9,10 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import ca.ubc.magic.thingbroker.controller.config.Constants;
 import ca.ubc.magic.thingbroker.controller.config.SpringMongoConfig;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Thing;
-import ca.ubc.magic.utils.Utils;
 
 public class ThingDAO {
 
@@ -63,7 +60,7 @@ public class ThingDAO {
 
 	public static void delete(Thing thing) {
 		Query q = new Query(Criteria.where("thingId").is(thing.getThingId()));
-		mongoOperation.remove(q, "things");
+		mongoOperation.findAndRemove(q, Thing.class,"things");
 		Event event = new Event();
 		event.setThingId(thing.getThingId());
 		EventDAO.deleteFromThing(event);

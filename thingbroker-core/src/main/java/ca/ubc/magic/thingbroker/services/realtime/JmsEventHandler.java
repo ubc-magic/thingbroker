@@ -76,11 +76,13 @@ public class JmsEventHandler implements MessageListener {
 			events.add(newEvent);
 		}
 		messageQueue.drainTo(events);
+		cleanUp();
 		return events;
 	}
 
 	public void onMessage(Message message) {
 		try {
+			System.out.println("Nova mensagem");
 			MapMessage ac = (MapMessage) message;
 			Event event = Utils.parseToObject(ac.getString("event"),Event.class);
 			messageQueue.offer(event);

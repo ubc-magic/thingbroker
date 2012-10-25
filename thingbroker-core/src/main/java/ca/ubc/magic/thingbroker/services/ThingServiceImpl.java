@@ -35,8 +35,7 @@ public class ThingServiceImpl implements ThingService {
 		if(t != null && t.size() > 0) {
 		   return t;	
 		}
-		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-				Utils.getMessage("THING_NOT_FOUND"));
+		return null;
 	}
 
 	public Map<String, Object> getThingMetadata(Thing id) throws ThingBrokerException {
