@@ -293,6 +293,8 @@ http://kimberly.magic.ubc.ca/events/thing/{thingId}
 
 ### URL Parameters
 
+    requester (required) Defines who is requesting events. It's used to automatically subscribe the requester to the thing which the events will be returned. 
+    timeout (not required) Determines, in seconds, how long the request will last until return. It's used to receive realtime events.  
     limit: (not required) Determines how many events will be fetched. Example Values: 24
     start: (not required) Works together with "end", returns events in an interval of time defined by "start" and "end". This parameter must be defined in Unix epoch time (milliseconds). Example Values: 1349937425
     end: (not required) Works together with "start", returns events in an interval of time defined by "start" and "end". This parameter must be defined in Unix epoch time (milliseconds). Example Values: 1349937434
