@@ -28,7 +28,6 @@ import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
-import ca.ubc.magic.utils.Utils;
 
 @Controller
 @RequestMapping("/events")
@@ -55,7 +54,7 @@ public class EventController {
 		   Event event = new Event();
 		   event.setServerTimestamp(System.currentTimeMillis());
 		   event.setThingId(thingId);
-		   event.setInfo(Utils.generateJSON(content));
+		   event.setInfo(content);
 		   return eventService.create(event, null, keepStored);
         }
 		catch(ThingBrokerException ex) {

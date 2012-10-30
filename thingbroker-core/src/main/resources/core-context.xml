@@ -43,8 +43,8 @@
 
 	<amq:connectionFactory id="jmsFactory" brokerURL="vm://localhost"/>
 
-	<amq:broker useJmx="false" persistent="false">
-		<amq:transportConnectors>
+	<amq:broker brokerName="thingbroker" useJmx="false" persistent="false" dataDirectory="/tmp/thingbroker">
+	    <amq:transportConnectors>
 			<amq:transportConnector uri="tcp://localhost:0" />
 		</amq:transportConnectors>
 	</amq:broker>

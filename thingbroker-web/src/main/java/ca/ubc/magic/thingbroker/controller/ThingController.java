@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,7 +38,7 @@ public class ThingController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, consumes="application/json", produces = "application/json")
-	@ResponseBody
+	@ResponseBody 
 	public Object registerThing(@RequestBody Thing thing) {
 	    try {
 		   return thingService.storeThing(thing);
@@ -61,6 +62,7 @@ public class ThingController {
 		   return thingService.update(thing);
 		}
 		catch(Exception ex) {
+		    ex.printStackTrace();
 			return new StatusMessage(Constants.CODE_INTERNAL_ERROR, ex.getMessage());
 		}
 	}
@@ -127,7 +129,7 @@ public class ThingController {
 		}
 	}
 	
-/*	@RequestMapping(value = "/{thingId}/follow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/{thingId}/follow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Object followThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
 		try {
@@ -144,7 +146,6 @@ public class ThingController {
 			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
 		}
 	}
-*/
 
 	@RequestMapping(value = "/{thingId}/unfollow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody

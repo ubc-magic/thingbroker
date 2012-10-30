@@ -15,7 +15,7 @@ public class Event implements Serializable, Comparable<Event>{
     private String eventId;
 	private String thingId;
 	private Long serverTimestamp;
-	private String info;
+	private Object info;
 	private List<String> data;
     
     public Event() {
@@ -39,11 +39,11 @@ public class Event implements Serializable, Comparable<Event>{
 	public void setServerTimestamp(Long serverTimestamp) {
 		this.serverTimestamp = serverTimestamp;
 	}
-    public String getInfo() {
+    public Object getInfo() {
 		return info;
 	}
 
-	public void setInfo(String info) {
+	public void setInfo(Object info) {
 		this.info = info;
 	}
 	public List<String> getData() {

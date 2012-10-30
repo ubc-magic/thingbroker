@@ -3,6 +3,7 @@ package ca.ubc.magic.thingbroker.services;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,20 +89,24 @@ public class EventServiceImpl implements EventService {
 					  ThingDAO.update(tToFollow.get(0));
 					}
 				}
-				long followingId = realTimeEventService.follow(event.getThingId());
-				Set<Event> realTimeEvents = null;
-				if(timeout != null) {
-				   realTimeEvents = realTimeEventService.getEvents(followingId, Long.valueOf(timeout));
-				}
-				else {
-				   realTimeEvents = realTimeEventService.getEvents(followingId, Constants.REAL_TIME_EVENTS_WAITING_TIME);					
-				}
 				Set<Event> storedEvents = EventDAO.retrieveEventsFromThing(event, params); //Using set to avoid duplicates
 				List<Event> response = new ArrayList<Event>();
-				if(storedEvents != null) {
-					realTimeEvents.addAll(storedEvents);
+				if(storedEvents != null && storedEvents.size() > 0) {
+					response.addAll(storedEvents);
 				}
-				response.addAll(realTimeEvents);
+				else {
+				   long followingId = realTimeEventService.follow(event.getThingId());
+				   Set<Event> realTimeEvents =  new LinkedHashSet<Event>();
+				   if(timeout != null) {
+				      realTimeEvents = realTimeEventService.getEvents(followingId, Long.valueOf(timeout));
+			 	   }
+				   else {
+				      realTimeEvents = realTimeEventService.getEvents(followingId, Constants.REAL_TIME_EVENTS_WAITING_TIME);					
+				   }
+				   if(realTimeEvents.size() > 0) {
+					   response.addAll(realTimeEvents);
+				   }
+				}
 				Collections.sort(response);
 				return response;
 			}
