@@ -365,6 +365,35 @@ The server will respond with the file whose ID matches the provided id.
 None
 ```
 
+## (POST) events/event/{eventId}
+
+This method will update the event identified by eventId. If none event was found, it returns a JSON with an error message
+
+### Resource URL
+
+http://kimberly.magic.ubc.ca/events/event/{eventId}
+
+### URL Parameters
+
+none
+
+### JSON Parameters
+
+none
+
+### Example request
+
+POST http://kimberly.magic.ubc.ca/events/event/{eventId}
+
+**Note: If you are adding a file (image or other) on the body, make sure to change the content-type appropriately to: "Content-type: multipart/form-data". In this case, there'll be a reference id to each content in the data field of the event**
+
+The server will respond with the a JSON describing the updated event.
+
+```
+None
+```
+
+
 # Error Codes
 
 Calling a service in thing broker can return a JSON representing a status message indicating an error that occurred. All status messages are composed by a status code and a text message. The status code can be:
@@ -380,6 +409,8 @@ SENT_EVENT_TO_NON_EXISTENT_THING = 3
 REQUESTER_NOT_INFORMED = 4
 
 REQUESTER_NOT_REGISTERED = 5
+
+CODE_EVENT_NOT_FOUND = 6
 
 INTERNAL_ERROR = 500
 
