@@ -256,7 +256,7 @@ http://kimberly.magic.ubc.ca/thingbroker-web/events/event/thing/{thingId}
 
 ### URL Parameters
 
-    keep-stored (required): When set to "true" the events will be stored for future reference.
+    keep-stored: (required) When set to "true" the events will be stored for future reference.
 
 ### JSON Parameters
 
