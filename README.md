@@ -185,8 +185,6 @@ http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
 
 DELETE http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing?thingId="123"
 
-Content-type: application/JSON
-
 **Response:** A JSON that represents the thing it was removed.
 
 ```
