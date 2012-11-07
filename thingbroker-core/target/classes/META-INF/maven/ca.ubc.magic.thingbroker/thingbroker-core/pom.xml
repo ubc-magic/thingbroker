@@ -44,7 +44,7 @@
 			<artifactId>spring-data-mongodb</artifactId>
 			<version>1.0.4.RELEASE</version>
 		</dependency>
-		<!-- CGLib is necessary to use @Configuratio annotation -->
+		<!-- CGLib is necessary to use @Configuration annotation -->
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
