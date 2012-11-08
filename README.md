@@ -347,7 +347,7 @@ http://kimberly.magic.ubc.ca:8080/events/event/content/{contentId}
 
 ### URL Parameters
 
-none
+mustAttach: (required) Indicated if the content must be attached to the response (for downloading purpose) or not.
 
 ### JSON Parameters
 
@@ -355,7 +355,7 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca:8080/events/event/content/9dafb29b-21c8-4266-a6d6-8fe5ae128470
+GET http://kimberly.magic.ubc.ca:8080/events/event/content/9dafb29b-21c8-4266-a6d6-8fe5ae128470?mustAttach=false
 
 The server will respond with the file whose ID matches the provided id.
 
