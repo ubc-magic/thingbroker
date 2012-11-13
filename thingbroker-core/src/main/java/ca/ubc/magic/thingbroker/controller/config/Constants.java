@@ -9,10 +9,12 @@ public class Constants {
 	public static Integer CODE_SENT_EVENT_TO_NON_EXISTENT_THING = 3;
 	public static Integer CODE_REQUESTER_NOT_INFORMED = 4;
 	public static Integer CODE_REQUESTER_NOT_REGISTERED = 5;
+	public static Integer CODE_EVENT_NOT_FOUND = 6;
+	public static Integer CODE_EVENT_DATA_NOT_FOUND = 7;
 	public static Integer CODE_INTERNAL_ERROR = 500;
 	
 	
 	// ---------------------------- Configuration Variables ---------------------
-	public static Integer REAL_TIME_EVENTS_WAITING_TIME = 15;
+	public static Integer REAL_TIME_EVENTS_WAITING_TIME = 15; //in seconds
 	
 }

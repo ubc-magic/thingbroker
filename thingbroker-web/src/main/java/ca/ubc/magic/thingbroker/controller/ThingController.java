@@ -84,11 +84,11 @@ public class ThingController {
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, consumes="application/json", produces = "application/json")
+	@RequestMapping(method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
-	public Object removeThing(@RequestBody Thing thing) {
+	public Object removeThing(@RequestParam("thingId") String thingId) {
 		try {
-		  Thing t = thingService.delete(thing);
+		  Thing t = thingService.delete(new Thing(thingId));
 		  return (t != null) ? t : "{}";
 		}
 		catch(ThingBrokerException ex) {
@@ -105,8 +105,20 @@ public class ThingController {
 	
 	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public Map<String,Object> retrieveThingMetadata(@PathVariable String thingId) {
-		return thingService.getThingMetadata(new Thing(thingId));
+	public Object retrieveThingMetadata(@PathVariable String thingId) {
+		try {
+		  return thingService.getThingMetadata(new Thing(thingId));
+		}
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
 	}
 	
 	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.POST, consumes ="application/json", produces = "application/json")

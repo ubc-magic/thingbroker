@@ -23,6 +23,7 @@ import org.springframework.jms.core.MessageCreator;
 
 import ca.ubc.magic.thingbroker.controller.config.Constants;
 import ca.ubc.magic.thingbroker.controller.dao.EventDAO;
+import ca.ubc.magic.thingbroker.controller.dao.EventDataDAO;
 import ca.ubc.magic.thingbroker.controller.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
@@ -61,12 +62,20 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
-	public void update(Event event, EventData[] data) {
-
+	public Event update(Event event, EventData[] data) throws ThingBrokerException {
+		Event storedEvent = EventDAO.retrieveById(event);
+		if (storedEvent != null) {
+			return create(event, data, true);
+		}
+		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));
 	}
 
 	public Event retrieve(Event event) {
-		return EventDAO.retrieveById(event);
+		Event e = EventDAO.retrieveById(event);
+		if(event != null) {
+			return e;
+		}
+		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));
 	}
 
 	public List<Event> retrieveByCriteria(Event event,Map<String, String> params) throws Exception {
@@ -114,7 +123,24 @@ public class EventServiceImpl implements EventService {
 		}
 		throw new ThingBrokerException(Constants.CODE_REQUESTER_NOT_INFORMED,Utils.getMessage("REQUESTER_NOT_INFORMED"));
 	}
+	
+	public EventData retrieveEventData(EventData eventData) throws Exception {
+		EventData data = EventDataDAO.retrieve(eventData);
+		if(data != null) {
+			return data;
+		}
+		throw new ThingBrokerException(Constants.CODE_EVENT_DATA_NOT_FOUND,Utils.getMessage("EVENT_DATA_NOT_FOUND"));
+	}
 
+	public EventData retrieveEventDataInfo(EventData eventData) throws Exception{
+		EventData data = EventDataDAO.retrieve(eventData);
+		if(data != null) {
+			data.setData(null);
+			return data;
+		}
+		throw new ThingBrokerException(Constants.CODE_EVENT_DATA_NOT_FOUND,Utils.getMessage("EVENT_DATA_NOT_FOUND"));
+	}
+	
 	private void sendToBroker(final Event event) {
 		Destination destination = new ActiveMQTopic("thingbroker.things.thing." + event.getThingId());
 		jmsTemplate.send(destination, new MessageCreator() {

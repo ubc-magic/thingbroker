@@ -23,9 +23,7 @@ public class ThingServiceImpl implements ThingService {
 			searchParam.put("thingId", thing.getThingId());
 			List<Thing> storedThings = getThing(searchParam);
 			if (storedThings != null && storedThings.size() > 0) {
-				throw new ThingBrokerException(
-						Constants.CODE_THING_ALREADY_REGISTERED,
-						Utils.getMessage("THING_ALREADY_REGISTERED"));
+				throw new ThingBrokerException(Constants.CODE_THING_ALREADY_REGISTERED,Utils.getMessage("THING_ALREADY_REGISTERED"));
 			}
 		}
 		ThingDAO.create(thing);
@@ -50,8 +48,7 @@ public class ThingServiceImpl implements ThingService {
 		if (storedThings != null) {
 			return storedThings.get(0).getMetadata();
 		}
-		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-				Utils.getMessage("THING_NOT_FOUND"));
+		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,Utils.getMessage("THING_NOT_FOUND"));
 	}
 
 	public Thing addMetadata(Thing thing) throws ThingBrokerException {

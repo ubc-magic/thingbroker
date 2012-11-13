@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.ubc.magic.thingbroker.controller.config.Constants;
-import ca.ubc.magic.thingbroker.controller.dao.EventDataDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
@@ -32,8 +31,7 @@ import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 @Controller
 @RequestMapping("/events")
 public class EventController {
-	private static final Logger logger = LoggerFactory
-			.getLogger(EventController.class);
+	private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
 	private EventService eventService;
 
@@ -78,22 +76,7 @@ public class EventController {
 			Event event = new Event();
 			event.setServerTimestamp(System.currentTimeMillis());
 			event.setThingId(thingId);
-			List<EventData> dataList = new ArrayList<EventData>();
-			final Map<String, MultipartFile> content = request.getFileMap();
-			for (MultipartFile file : content.values()) {
-				EventData data = new EventData();
-				try {
-					data.setData(file.getBytes());
-					data.setName(file.getOriginalFilename());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				data.setMimeType(file.getContentType());
-				dataList.add(data);
-			}
-			EventData[] dataArray = new EventData[dataList.size()];
-			return eventService.create(event, dataList.toArray(dataArray),
-					keepStored);
+			return eventService.create(event, getEventDataArray(request),keepStored);
 		}		
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();
@@ -107,6 +90,40 @@ public class EventController {
 		}
 	}
 
+	@RequestMapping(value="/event/{eventId}",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Object updateEvent(@PathVariable String eventId, @RequestBody Map<String,Object> info) {
+		try {
+			Event event = new Event(eventId);
+			event.setInfo(info);
+			return eventService.update(event, null);
+		} catch (ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(), ex.getMessage());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/event/{eventId}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "application/json")
+	@ResponseBody
+	public Object updateEventWithMultipartContent(@PathVariable String eventId, MultipartHttpServletRequest request) {
+		try {
+			return eventService.update(new Event(eventId), getEventDataArray(request));
+		} catch (ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(), ex.getMessage());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
+	}
+	
 	@RequestMapping(value = "/thing/{thingId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object getThingEvents(@PathVariable String thingId,
@@ -147,24 +164,29 @@ public class EventController {
 			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
 		}
 	}
-
+	
 	@RequestMapping(value = "/event/content/{contentId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Object getEventContent(@PathVariable String contentId,
+	public Object getEventData(@PathVariable String contentId, @RequestParam("mustAttach") boolean mustAttach,
 			HttpServletResponse response) {
 		try {
-			EventData data = EventDataDAO.retrieve(new EventData(contentId));
+			EventData data = eventService.retrieveEventData(new EventData(contentId));
 			if (data != null) {
 				response.setContentType(data.getMimeType());
 				response.setContentLength(data.getData().length);
 				if (!data.getMimeType().equals("application/json")) {
-					response.setHeader("Content-Disposition",
-							"attachment; filename=\"" + data.getName() + "\"");
+					if(mustAttach) {
+						response.setHeader("Content-Disposition",	"attachment; filename=\"" + data.getName() + "\"");	
+					}
 				}
 				try {
-					FileCopyUtils.copy(data.getData(),
-							response.getOutputStream());
-				} catch (IOException e) {
+					if(mustAttach) {
+					   FileCopyUtils.copy(data.getData(),response.getOutputStream());
+					}
+					else {
+					   response.getOutputStream().write(data.getData());
+					}
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -181,5 +203,65 @@ public class EventController {
 		}
 		return null;
 	}
-
+	
+	@RequestMapping(value = "/event/content-info/{contentId}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Object getEventContentInfo(@PathVariable String contentId) {
+		try {
+			return eventService.retrieveEventDataInfo(new EventData(contentId));
+		}		
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
+	}
+	
+	@RequestMapping(value = "/event/{eventId}/contents-description", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Object getEventContentsDescription(@PathVariable String eventId) {
+		try {
+			Event event = eventService.retrieve(new Event(eventId));
+			List<EventData> contents = new ArrayList<EventData>();
+			if(event.getData() != null && event.getData().size() > 0) { 
+			  for(String dataId : event.getData()) {
+				 contents.add(eventService.retrieveEventDataInfo(new EventData(dataId)));
+			  }
+			}
+			return contents;
+		}		
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
+	}
+	
+	private EventData [] getEventDataArray(MultipartHttpServletRequest request) {
+		List<EventData> dataList = new ArrayList<EventData>();
+		final Map<String, MultipartFile> content = request.getFileMap();
+		for (MultipartFile file : content.values()) {
+			EventData data = new EventData();
+			try {
+				data.setData(file.getBytes());
+				data.setName(file.getOriginalFilename());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			data.setMimeType(file.getContentType());
+			dataList.add(data);
+		}
+		EventData[] dataArray = new EventData[dataList.size()];
+		return dataList.toArray(dataArray);
+	}
 }
