@@ -82,7 +82,7 @@ An "event" response is commonly represented by a collection of events ordered by
 You can use the publicly available endpoint of the Thing Broker at:
 
 ```
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/
+http://kimberly.magic.ubc.ca:8080/thingbroker/
 ```
 
 If you are running your own instance exchange the location of the broker to your server. The following methods are available for creating and manipulating "things" on the Thing Broker.
@@ -93,7 +93,7 @@ This method creates a thing on the Thing Broker. There are no required JSON para
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
+http://kimberly.magic.ubc.ca:8080/thingbroker/thing
 
 ### URL Parameters
 
@@ -108,7 +108,7 @@ http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
+POST http://kimberly.magic.ubc.ca:8080/thingbroker/thing
 
 Content-type: application/JSON
 Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
@@ -132,7 +132,7 @@ This method updates a thing on the Thing Broker. The only required JSON paramete
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
+http://kimberly.magic.ubc.ca:8080/thingbroker/thing
 
 ### URL Parameters
 
@@ -147,7 +147,7 @@ http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
 
 ### Example request
 
-PUT http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
+PUT http://kimberly.magic.ubc.ca:8080/thingbroker/thing
 
 Content-type: application/JSON
 Body: {"thingId": "123", "name": "test","description":"This is a thing","type":"Random thing"}
@@ -171,7 +171,7 @@ This method removes a thing and all its events from Thing Broker.
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
+http://kimberly.magic.ubc.ca:8080/thingbroker/thing
 
 ### URL Parameters
 
@@ -183,7 +183,7 @@ http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing
 
 ### Example request
 
-DELETE http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing?thingId="123"
+DELETE http://kimberly.magic.ubc.ca:8080/thingbroker/thing?thingId="123"
 
 **Response:** A JSON that represents the thing it was removed.
 
@@ -206,7 +206,7 @@ This method will search for a thing on the current Thing Broker instance. It wil
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search
+http://kimberly.magic.ubc.ca:8080/thingbroker/thing/search
 
 ### URL Parameters
 
@@ -222,13 +222,13 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?thingId=123
+GET http://kimberly.magic.ubc.ca:8080/thingbroker/thing/search?thingId=123
 
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?name=test
+GET http://kimberly.magic.ubc.ca:8080/thingbroker/thing/search?name=test
 
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?type=test
+GET http://kimberly.magic.ubc.ca:8080/thingbroker/thing/search?type=test
 
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/thing/search?thingId=123&name=test
+GET http://kimberly.magic.ubc.ca:8080/thingbroker/thing/search?thingId=123&name=test
 
 
 ```
@@ -250,7 +250,7 @@ This method will add events to a thing,
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/thingbroker-web/events/event/thing/{thingId}
+http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/thing/{thingId}
 
 ### URL Parameters
 
@@ -264,7 +264,7 @@ You must provide a JSON object containing a collection of key-value pairs. You c
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca:8080/thingbroker-web/events/event/thing/123?keep-stored=true
+POST http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/thing/123?keep-stored=true
 
 Content-type: application/JSON
 Body: {"video_url": "http://www.youtube.com/watch?v=Rku5Oyf-hYU"}
@@ -307,7 +307,7 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca:8080/thingbroker-web/events/thing/123
+GET http://kimberly.magic.ubc.ca:8080/thingbroker/events/thing/123?requester=1234
 
 ```
 [
@@ -343,7 +343,7 @@ This method will retrieve a piece of content by the unique content ID. Such ID i
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/events/event/content/{contentId}
+http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/content/{contentId}
 
 ### URL Parameters
 
@@ -355,7 +355,7 @@ none
 
 ### Example request
 
-GET http://kimberly.magic.ubc.ca:8080/events/event/content/9dafb29b-21c8-4266-a6d6-8fe5ae128470?mustAttach=false
+GET http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/content/9dafb29b-21c8-4266-a6d6-8fe5ae128470?mustAttach=false
 
 The server will respond with the file whose ID matches the provided id.
 
@@ -369,7 +369,7 @@ This method will update the event identified by eventId. If none event was found
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/events/event/{eventId}
+http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/{eventId}
 
 ### URL Parameters
 
@@ -381,7 +381,7 @@ none
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca:8080/events/event/{eventId}
+POST http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/{eventId}
 
 **Note: If you are adding a file (image or other) on the body, make sure to change the content-type appropriately to: "Content-type: multipart/form-data". In this case, there'll be a reference id to each content in the data field of the event**
 
