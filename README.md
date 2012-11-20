@@ -3,7 +3,7 @@ THING BROKER
 
 # VERSION
 
-Build version: 0.0.5
+Build version: 1.0
 STS: 3.1.0
 
 # INTRODUCTION
