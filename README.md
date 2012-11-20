@@ -373,7 +373,7 @@ http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/{eventId}
 
 ### URL Parameters
 
-none
+serverTimestamp: (required) The serverTimestamp field for the event that is being updated. This is necessary to check if the event being updated won't overlap new changes in the event.
 
 ### JSON Parameters
 
@@ -381,11 +381,38 @@ none
 
 ### Example request
 
-POST http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/{eventId}
+POST http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/{eventId}?serverTimestamp=18746875687
 
 **Note: If you are adding a file (image or other) on the body, make sure to change the content-type appropriately to: "Content-type: multipart/form-data". In this case, there'll be a reference id to each content in the data field of the event**
 
-The server will respond with the a JSON describing the updated event.
+The server will respond with a JSON describing the updated event.
+
+```
+None
+```
+
+## (PUT) events/event/{eventId}
+
+This method will add content to the info field of the event identified by eventId. If none event was found, it returns a JSON with an error message
+If you try to add content with an already existing key, the new content will overlap the one that is already stored.
+
+### Resource URL
+
+http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/{eventId}
+
+### URL Parameters
+
+serverTimestamp: (required) The serverTimestamp field for the event that is being updated. This is necessary to check if the event being updated won't overlap new changes in the event.
+
+### JSON Parameters
+
+none
+
+### Example request
+
+PUT http://kimberly.magic.ubc.ca:8080/thingbroker/events/event/{eventId}?serverTimestamp=18746875687
+
+The server will respond with a JSON describing the updated event.
 
 ```
 None
