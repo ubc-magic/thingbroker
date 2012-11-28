@@ -287,7 +287,7 @@ This method will query events from a thing, responding with an ordered collectio
 
 ### Resource URL
 
-http://kimberly.magic.ubc.ca:8080/events/thing/{thingId}
+http://kimberly.magic.ubc.ca:8080/thingbroker/events/thing/{thingId}
 
 ### URL Parameters
 
