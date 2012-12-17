@@ -1,5 +1,6 @@
 package ca.ubc.magic.thingbroker.services.interfaces;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,4 +15,5 @@ public interface EventService {
    public List<Event> retrieveByCriteria(Event event, Map<String, String> params) throws Exception;
    public EventData retrieveEventData(EventData eventData) throws Exception;
    public EventData retrieveEventDataInfo(EventData eventData) throws Exception;
+   public Event addDataToInfoField(Event event, HashMap<String, Object> content) throws Exception;
 }

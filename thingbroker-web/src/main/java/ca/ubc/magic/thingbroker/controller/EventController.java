@@ -27,6 +27,7 @@ import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
+import ca.ubc.magic.utils.Utils;
 
 @Controller
 @RequestMapping("/events")
@@ -92,11 +93,18 @@ public class EventController {
 
 	@RequestMapping(value="/event/{eventId}",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public Object updateEvent(@PathVariable String eventId, @RequestBody Map<String,Object> info) {
+	public Object updateEvent(@PathVariable String eventId, @RequestBody Map<String,Object> info,@RequestParam Map<String, String> params) {
 		try {
-			Event event = new Event(eventId);
-			event.setInfo(info);
-			return eventService.update(event, null);
+			if(params != null) {
+			 String serverTimestamp = params.get("serverTimestamp");
+			 if(serverTimestamp != null) {
+				Event updatedEvent = new Event(eventId);
+				updatedEvent.setServerTimestamp(Long.valueOf(serverTimestamp));
+				updatedEvent.setInfo(info);
+				return eventService.update(updatedEvent, null);	
+			 }
+			}
+			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_NOT_PROVIDED,Utils.getMessage("SERVER_TIMESTAMP_NOT_PROVIDED"));
 		} catch (ThingBrokerException ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
@@ -118,6 +126,32 @@ public class EventController {
 			logger.debug(ex.getMessage());
 			return new StatusMessage(ex.getExceptionCode(), ex.getMessage());
 		} catch (Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
+	}
+	
+	@RequestMapping(value = "/event/{eventId}", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public Object addEventInfoData(@PathVariable String eventId, @RequestBody HashMap<String, Object> content,@RequestParam Map<String, String> params) {
+        try {
+        	if(params != null) {
+   			   String serverTimestamp = params.get("serverTimestamp");
+   			   if(serverTimestamp != null) {
+   				  Event updatedEvent = new Event(eventId);
+   			      updatedEvent.setServerTimestamp(Long.valueOf(serverTimestamp));	
+ 		          return eventService.addDataToInfoField(updatedEvent, content); 
+   			   }
+        	}
+			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_NOT_PROVIDED,Utils.getMessage("SERVER_TIMESTAMP_NOT_PROVIDED"));
+        }
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
+		}
+		catch(Exception ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
 			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());

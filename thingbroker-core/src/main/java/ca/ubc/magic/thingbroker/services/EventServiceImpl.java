@@ -3,6 +3,7 @@ package ca.ubc.magic.thingbroker.services;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -62,17 +63,38 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
-	public Event update(Event event, EventData[] data) throws ThingBrokerException {
+	public synchronized Event update(Event event, EventData[] data) throws ThingBrokerException {
 		Event storedEvent = EventDAO.retrieveById(event);
 		if (storedEvent != null) {
-			return create(event, data, true);
+			if(storedEvent.getServerTimestamp().longValue() == event.getServerTimestamp().longValue()) {
+			   event.setThingId(storedEvent.getThingId());
+			   event.setServerTimestamp(System.currentTimeMillis());
+			   return create(event, data, true);
+			}
+			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_OUTDATED,Utils.getMessage("SERVER_TIMESTAMP_OUTDATED"));
+		}
+		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));
+	}
+	
+	public synchronized Event addDataToInfoField(Event event, HashMap<String, Object> content) throws Exception {
+		Event storedEvent = EventDAO.retrieveById(event);
+		if(storedEvent != null) {
+			if(storedEvent.getServerTimestamp().longValue() == event.getServerTimestamp().longValue()) {
+			   if(storedEvent.getInfo() instanceof Map) {
+			      LinkedHashMap<String,Object> storedInfo = (LinkedHashMap<String,Object>) storedEvent.getInfo();
+			      storedInfo.putAll(content);
+			      return create(storedEvent, null, true);
+			   }
+			   throw new ThingBrokerException(Constants.CODE_INVALID_EVENT_INFO_FIELD, Utils.getMessage("EVENT_INFO_FIELD_INVALID"));
+			}
+			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_OUTDATED,Utils.getMessage("SERVER_TIMESTAMP_OUTDATED"));
 		}
 		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));
 	}
 
 	public Event retrieve(Event event) {
 		Event e = EventDAO.retrieveById(event);
-		if(event != null) {
+		if(e != null) {
 			return e;
 		}
 		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));

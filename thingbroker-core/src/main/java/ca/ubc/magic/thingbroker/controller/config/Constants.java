@@ -11,6 +11,9 @@ public class Constants {
 	public static Integer CODE_REQUESTER_NOT_REGISTERED = 5;
 	public static Integer CODE_EVENT_NOT_FOUND = 6;
 	public static Integer CODE_EVENT_DATA_NOT_FOUND = 7;
+	public static Integer CODE_INVALID_EVENT_INFO_FIELD = 8;
+	public static Integer CODE_SERVER_TIMESTAMP_NOT_PROVIDED = 9;
+	public static Integer CODE_SERVER_TIMESTAMP_OUTDATED = 10;
 	public static Integer CODE_INTERNAL_ERROR = 500;
 	
 	

@@ -51,7 +51,7 @@ public class ThingServiceImpl implements ThingService {
 		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,Utils.getMessage("THING_NOT_FOUND"));
 	}
 
-	public Thing addMetadata(Thing thing) throws ThingBrokerException {
+	public synchronized Thing addMetadata(Thing thing) throws ThingBrokerException {
 		Map<String, String> searchParams = new HashMap<String, String>();
 		searchParams.put("thingId", thing.getThingId());
 		List<Thing> thingToUpdate = getThing(searchParams);
