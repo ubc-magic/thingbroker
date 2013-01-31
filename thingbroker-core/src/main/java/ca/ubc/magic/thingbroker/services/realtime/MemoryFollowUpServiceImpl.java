@@ -4,6 +4,7 @@ import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.Connection;
@@ -84,7 +85,7 @@ public class MemoryFollowUpServiceImpl implements DisposableBean {
 		following.remove(subId);
 	}
 
-	public List<Event> getEvents(long id, long waitTime) throws Exception {
+	public Set<Event> getEvents(long id, long waitTime) throws Exception {
 		JmsEventHandler sub = following.get(id);
 		return sub.getEvents(waitTime);
 	}
