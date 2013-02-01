@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">  
+<html lang="en">  
+<head>  
+<title>jQuery plugin: brokerize this!</title>  
+
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>  
+<script type="text/javascript" src="jquery.broker.js"></script>  
+
+</head>  
+<body>  
+  
+<img class="image1" src="image1.jpg"></img>
+<img class="image2" src="image2.jpg"></img>
+<img class="image3" src="image3.jpg"></img>
+<img class="image4" src="image4.jpg"></img>
+
+<script type="text/javascript"> 
+$(".image1").click(function() {
+  $(this).broker({src:'image1.jpg', to:'image'});
+});
+$(".image2").click(function() {
+  $(this).broker({src:'image2.jpg', to:'image'});
+});
+$(".image3").click(function() {
+  $(this).broker({src:'image3.jpg', to:'image'});
+});
+$(".image4").click(function() {
+  $(this).broker({src:'image4.jpg', to:'image'});
+});
+</script>
+
+</body>  
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">  
+<html lang="en">  
+<head>  
+<title>jQuery plugin: brokerize this!</title>  
+
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>  
+<script type="text/javascript" src="jquery.broker.js"></script>  
+
+</head>  
+<body>  
+<h1>Brokerize this! A demo on the broker.jquery plugin.</h1>
+<h3>NOTE: You need a MAGIC broker instance running on localhost:8800.</h3>
+<p>This demo page demonstrates the jQuery broker plugin. The plugin will make a web object into a "thing" accessible from anywhere. 
+You can then access and modify such elements from anywhere on the internet. There are three methods implemented today (append, remove and src) that mimic
+usual JQuery DOM manipulations. So why use this? Because you can instatiate an element in an existent webpage (e.g. a div) with one line of code and and access 
+it through python, curl, another website, a phone, anywhere really. This solves many issues with cross-domain access cross-language inter-dependency and much more.</p>
+<p>How does it work? Simple, when you instatiate an object like <code>$(".list").broker({listen:true});</code> you automaticall set recursive ajax calls and default callbacks
+for that object. You can then access such manipulations by sending events on the "list" topic of a MagicBroker.
+</p>
+
+<ul>
+<li>
+	<code>$('.class').broker();</code> Will subscribe the object with a class "class" to a topic="class" and a clientID="class"
+</li>
+<li>
+	<code>$('.class').broker({listen:true});</code> Will subscribe the object, set repetitive ajax calls to listen for events, and define callback functions for append, remove and src.
+</li>
+<li>
+	<code>$('.class').broker({listen:true, url:'http://site.com'});</code> Will initialize the object to listen on a broker hosted on http://site.com
+</li>
+<li>
+	<code>$('.class').broker({listen:true, url:'http://site.com', topic:'atopic'});</code> Will initialize the object to listen on a broker hosted on http://site.com and listen on a different object's topic (to create a listener object for another topic).
+</li>
+<li>
+	<code>$('.class').broker({append:'hello this is a message', to 'class2'});</code> Will append 'hello this is a message' to the object with class "class2" (this will generate a p object within a div element, or a li element within a ul element)
+</li>
+<li>
+	<code>$('.class').broker({remove: 'this is a data sent previously', to: 'class2'});</code> Will remove child objects that contain the text "this is a data sent previously" within the object with class "class2"
+</li>
+<li>
+	<code> $('.class').broker({src:'imagesrc', to 'class2'});</code> Will update the src parameter of the img object with class "class2"
+</li>
+</ul>
+<p> if you're familiar with the broker, you can then send these events: </p>  
+<p>
+&#60;append&#62;data&#60;/append&#62; to append data to a brokerized div or ul
+</p>
+<p>
+&#60;remove&#62;data&#60;/remove&#62; to remove the element that contains the given data.
+</p>
+<p>
+&#60;src&#62;data&#60;/src&#62; to update the source of an image that has been brokerized.
+</p>
+<p>You can find the state of this code and more at <a href="https://github.com/magic-liam/broker-jquery-0.1.0.git">https://github.com/magic-liam/broker-jquery-0.1.0.git</a></p>
+<p>So let's get to the demo! Below is the cleaned up version of this html file, showing only the relevant functionality of the plugin (without cascading style sheets)</p>
+<hr>
+<!------->  
+<br>&lt;head&gt;  
+<br>&lt;script type=&quot;text/javascript&quot; src=&quot;jquery-1.7.2.min.js&quot;&gt;&lt;/script&gt;  
+<br>&lt;script type=&quot;text/javascript&quot; src=&quot;jquery.broker.js&quot;&gt;&lt;/script&gt;  
+<br>&lt;/head&gt;  
+<br>&lt;body&gt;  
+<br>
+<br>  &lt;ul class=&quot;list&quot;&gt;  
+<br>      &lt;li&gt;First item in a list&lt;/li&gt;   
+<br>      &lt;li&gt;Second item in a list&lt;/li&gt;   
+<br>  &lt;/ul&gt;  
+<br>
+<br>  &lt;div class=&quot;div&quot;&gt;
+<br>      &lt;p&gt;First paragraph in a div&lt;/p&gt;
+<br>      &lt;p&gt;Second paragraph in a div&lt;/p&gt;
+<br>  &lt;/div&gt;
+<br>
+<br>  &lt;img class=&quot;image&quot; src=&quot;image1.jpg&quot;&gt;&lt;/img&gt;
+<br>
+<br>  &lt;div class=&quot;appendbutton&quot;&gt;Append &quot;Hello&quot; to the a list element&lt;/div&gt;
+<br>  &lt;div class=&quot;removebutton&quot;&gt;Remove the element containing &lt;br&gt;&quot;First paragraph in a div&quot; from a div element&lt;/div&gt;
+<br>  &lt;img class=&quot;imagebutton&quot; src=&quot;image2.jpg&quot;&gt;&lt;/img&gt;
+<br>
+<br>&lt;script type=&quot;text/javascript&quot;&gt; 
+<br>// Creating some elements to play with that will be listening for events.
+<br>// if no url is passed, the plugin assumes the broker is running on http://kimberly.magic.ubc.ca/thingbroker-web
+<br>$(&quot;.list&quot;).broker({listen:true});
+<br>$(&quot;.div&quot;).broker({listen:true});
+<br>//As example, create an element with a particular url (broker) to use
+<br>$(&quot;.image&quot;).broker({listen:true, url: 'http://kimberly.magic.ubc.ca:8080/thingbroker-web'});
+<br>
+<br>//some interaction listeners from jquery binded to broker events
+<br>$(&quot;.appendbutton&quot;).click(function() {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$(this).broker({append:'hello', to:'list'});
+<br>});
+<br>$(&quot;.removebutton&quot;).click(function() {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$(this).broker({remove:'First paragraph in a div', to:'div'});
+<br>});
+<br>$(&quot;.imagebutton&quot;).click(function() {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$(this).broker({src:'image2.jpg', to:'image'});
+<br>});
+<br>&lt;/script&gt;
+<br>&lt;/body&gt; 
+</div>
+<!----------->
+
+
+<hr>
+
+<div style="float:left; background:#ddd;">
+
+  <ul class="list" style="background:pink;">  
+      <li>First item in a list</li>   
+      <li>Second item in a list</li>   
+  </ul>  
+
+  <div class="div" style="background:pink;">
+      <p>First paragraph in a div</p>
+      <p>Second paragraph in a div</p>
+  </div>
+
+  <img class="image" src="image1.jpg"></img>
+
+</div>
+
+<div style="float:left;background:#999">
+
+  <div class="appendbutton" style="background:pink;">Append "Hello" to the a list element</div><br>
+  
+  <div class="removebutton" style="background:pink;">Remove the element containing <br>"First paragraph in a div" from a div element</div><br>
+  
+  <img class="imagebutton" src="image2.jpg"></img>
+</div>
+
+<div style="float:left;">
+More Demos:<br>
+<a href="imageinteraction.html" target="_blank">Image interaction demo</a>
+<br>
+<a href="thirdparty.html" target="_blank">Third party data demo</a>
+<br>
+<a href="messageboard.html" target="_blank">A simple messageboard</a>
+<a href="messenger.html" target="_blank">And it's messenger</a>
+</div>
+
+<script type="text/javascript"> 
+
+// Creating some elements to play with that will be listening for events.
+// if no url is passed, the plugin assumes the broker is running on http://kimberly.magic.ubc.ca/thingbroker-web
+$(".list").broker({listen:true});
+$(".div").broker({listen:true});
+//As example, create an element with a particular url (broker) to use
+$(".image").broker({listen:true, url: 'http://kimberly.magic.ubc.ca:8080/thingbroker-web'});
+
+//some interaction listeners from jquery binded to broker events
+$(".appendbutton").click(function() {
+  $(this).broker({append:'hello', to:'list'});
+});
+
+$(".removebutton").click(function() {
+  $(this).broker({remove:'First paragraph in a div', to:'div'});
+});
+
+$(".imagebutton").click(function() {
+  $(this).broker({src:'image2.jpg', to:'image'});
+});
+</script>
+
+</body>  
+</html>

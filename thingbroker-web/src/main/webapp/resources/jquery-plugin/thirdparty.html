@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Basic GeoLocation Map</title>
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="jquery.broker.js"></script>
+<script type="text/javascript">
+    function initGeolocation(){
+        if( navigator.geolocation ){
+            // Call getCurrentPosition with success and failure callbacks
+            navigator.geolocation.getCurrentPosition( success, fail );
+        } else{
+            alert("Sorry, your browser does not support geolocation services.");
+        }
+    }
+
+    function success(position){
+        var image_url = "http://maps.google.com/maps/api/staticmap?sensor=false&center=" +
+               position.coords.latitude + "," +  
+               position.coords.longitude + "&zoom=14&size=300x400&markers=color:blue|label:S|"+  
+               position.coords.latitude + ',' + position.coords.longitude;  
+	$(".map").attr("src", image_url); 
+    }
+    function fail() {
+        // Could not obtain location
+    }
+</script>
+</head>
+<body onload="initGeolocation();">
+   <img class="map" src=""></img>
+
+<script type="text/javascript"> 
+$(".map").click(function() {
+  //$(this).broker({src:'image1.jpg', to:'image'});
+  $(this).broker({src:$(this).attr('src'), to:'image'});
+});
+</script>
+
+
+</body>
+</html>
+

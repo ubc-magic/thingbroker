@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">  
+<html lang="en">  
+<head>  
+<title>A simple messager</title>  
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>  
+<script type="text/javascript" src="jquery.broker.js"></script>  
+</head>  
+<body>  
+<p>Look into the code of index5.html to get started</p>
+
+<input type="text" id="txtbox"  />
+
+
+<!-- Uncomment below to brokerize -->
+<script type="text/javascript">
+$(document).ready(function(){
+
+    // A first option when pressing Return sends an event
+    $("#txtbox").keypress(function(e){
+    	if (e.which == 13) {
+    	  $(this).broker({append:$(this).val(), to: 'messageboard'});    
+        $(this).val("");	
+    	}
+    });
+
+    // Even more natural, using unfocus:
+    //$("#txtbox").focusout(function(){
+    //	$(this).broker({append:$(this).val(), to: 'messageboard'});    
+    //});
+})
+</script>
+
+
+
+</body>  
+</html>

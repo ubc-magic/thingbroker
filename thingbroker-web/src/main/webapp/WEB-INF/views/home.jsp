@@ -13,5 +13,6 @@
 		<input type="file" name="file2" /><br /><br />
 		<input type="submit" />
 	</form>
+	<a href="resources/jquery-plugin">ThingBroker jQuery Plugin</a>
 </body>
 </html>
