@@ -1,4 +1,4 @@
-package ca.ubc.magic.thingbroker.testes;
+package ca.ubc.magic.thingbroker;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,38 +9,63 @@ import java.util.UUID;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 import ca.ubc.magic.thingbroker.controller.dao.EventDAO;
+import ca.ubc.magic.thingbroker.controller.dao.EventDataDAO;
 import ca.ubc.magic.thingbroker.controller.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Thing;
 
+import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 
 public class Main {
 
+	private ThingDAO thingDao;
+	private EventDAO eventDao;
+	
 	public static void main(String[] args) throws MongoException,
 			JsonParseException, JsonMappingException, IOException {
-		// testEventsStorage();
-		persistBrazilianNewsServiceAsAThing();
-		persistWeatherServiceAsAThing();
-	    //addMetadata();
+		
+		Main main = new Main();
+		SimpleMongoDbFactory contentFactory = new SimpleMongoDbFactory(new Mongo(), "tbcontentstorage");
+		SimpleMongoDbFactory factory = new SimpleMongoDbFactory(new Mongo(), "thingbroker");
+		
+		EventDataDAO eventDataDAO = new EventDataDAO(new MongoTemplate(contentFactory));
+		EventDAO eventDao = new EventDAO(new MongoTemplate(factory), eventDataDAO);
+		main.setEventDAO(eventDao);
+		main.setThingDAO(new ThingDAO(new MongoTemplate(factory), eventDao));
+		
+		main.testEventsPersistence();
+		main.persistBrazilianNewsServiceAsAThing();
+		main.persistWeatherServiceAsAThing();
+	    main.addMetadata();
 		//List<GroupKey> g = new ArrayList<GroupKey>();
 		//g.add(new GroupKey("1234","public"));
 		//System.out.println("JSON: " + Utils.generateJSON(g));
 	}
 	
-	private static void addMetadata() {
+	void setThingDAO(ThingDAO thingDao) {
+		this.thingDao = thingDao;
+	}
+	
+	void setEventDAO(EventDAO eventDao) {
+		this.eventDao = eventDao;
+	}	
+	
+	private void addMetadata() {
 		Thing thing = new Thing("123");
 		Map<String,Object> metadata = new HashMap<String, Object>();
 		metadata.put("ip_address", "200.18.98.96");
 		metadata.put("port", "443");
 		metadata.put("mac_address", "ACBRYEOI");
 		thing.setMetadata(metadata);
-		ThingDAO.putMetadata(thing);
+		thingDao.putMetadata(thing);
 	}
 
-	private static void persistWeatherServiceAsAThing() {
+	private void persistWeatherServiceAsAThing() {
 		Thing thing = new Thing("123");
 		thing.setType("service");
 		thing.setName("weather forecast");
@@ -60,10 +85,10 @@ public class Main {
 		metadata.put("services", servicesAvailable);
 		//metadata.put("mac_address", "1246786SDU");
 		thing.setMetadata(metadata);
-		ThingDAO.create(thing);
+		thingDao.create(thing);
 	}
 
-	private static void persistBrazilianNewsServiceAsAThing() {
+	private void persistBrazilianNewsServiceAsAThing() {
 		Thing thing = new Thing("1234");
 		thing.setType("service");
 		thing.setName("brazil news");
@@ -82,10 +107,10 @@ public class Main {
 		Map<String, Object> metadata = new HashMap<String, Object>();
 		metadata.put("services", servicesAvailable);
 		thing.setMetadata(metadata);
-		ThingDAO.create(thing);
+		thingDao.create(thing);
 	}
 
-	private static void testEventsPersistence() {
+	private void testEventsPersistence() {
 		Event event = new Event(UUID.randomUUID().toString());
 		//Event event = new Event("6cdaa8b5-e9f4-40c5-9662-462ac4882333");
 		event.setServerTimestamp(System.currentTimeMillis());
@@ -96,7 +121,7 @@ public class Main {
 		data.add("2498793587");
 		data.add("87468-879");
 		event.setData(data);
-		EventDAO.create(event,null);
+		eventDao.create(event,null);
 	}
 }
 

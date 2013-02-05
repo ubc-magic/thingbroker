@@ -1,21 +1,22 @@
 package ca.ubc.magic.utils;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+/**
+ * JSON generator and parser
+ * 
+ * @author mike
+ *
+ * @param <T>
+ */
 public class Utils<T> {
 	private static final Log logger = LogFactory.getLog(Utils.class);
-	private static MessageSource msg = getMessageSource();
-	private static Locale locale = Locale.US;
 
 	/**
 	 * Generate JSON string from a java object
@@ -43,24 +44,5 @@ public class Utils<T> {
 		return mapper.readValue(json, classe);
 	}
 
-	private static MessageSource getMessageSource() {
-		if (msg == null) {
-			ApplicationContext app = new ClassPathXmlApplicationContext(
-					"META-INF/spring/app-context.xml");
-			msg = (MessageSource) app.getBean("msgObj");
-		}
-		return msg;
-	}
-	
-	public static String getMessage(String msgTag) {
-		return msg.getMessage(msgTag, null, locale);
-	}
-	
-	public static Locale getLocale() {
-		return locale;
-	}
 
-	public static void setLocale(Locale locale) {
-		Utils.locale = locale;
-	}
 }

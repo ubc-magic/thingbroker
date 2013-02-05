@@ -29,10 +29,6 @@ public class RealTimeEventServiceImpl implements RealTimeEventService,Disposable
 
 	private Map<Long, JmsEventHandler> following;
 	private Connection connection;
-	
-	public RealTimeEventServiceImpl() {
-		
-	}
 
 	public RealTimeEventServiceImpl(ConnectionFactory connectionFactory) {
 		this.following = new ConcurrentHashMap<Long, JmsEventHandler>();

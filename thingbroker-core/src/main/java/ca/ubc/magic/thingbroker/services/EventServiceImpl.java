@@ -32,7 +32,7 @@ import ca.ubc.magic.thingbroker.model.EventData;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
-import ca.ubc.magic.thingbroker.services.realtime.RealTimeEventServiceImpl;
+import ca.ubc.magic.utils.Messages;
 import ca.ubc.magic.utils.Utils;
 
 public class EventServiceImpl implements EventService {
@@ -40,131 +40,166 @@ public class EventServiceImpl implements EventService {
 
 	private final JmsTemplate jmsTemplate;
 	private final RealTimeEventService realTimeEventService;
+	private final ThingDAO thingDao;
+	private final EventDAO eventDao;
+	private final EventDataDAO eventDataDao;
+	private final Messages messages;
 
-	public EventServiceImpl() {
-		this.jmsTemplate = new JmsTemplate();
-		realTimeEventService = new RealTimeEventServiceImpl();
-	}
-
-	public EventServiceImpl(JmsTemplate jmsTemplate, RealTimeEventService realTimeEventService) {
+	public EventServiceImpl(JmsTemplate jmsTemplate,
+			RealTimeEventService realTimeEventService,
+			ThingDAO thingDao, EventDAO eventDao, EventDataDAO eventDataDao,
+			Messages messages) {
 		this.jmsTemplate = jmsTemplate;
 		this.realTimeEventService = realTimeEventService;
+		this.thingDao = thingDao;
+		this.eventDao = eventDao;
+		this.eventDataDao = eventDataDao;
+		this.messages = messages;
 	}
 
 	public Event create(Event event, EventData[] data, boolean mustSave) {
 		try {
 			if (mustSave) {
-				event = EventDAO.create(event, data); //Get the event object with eventId and content ids (if there is some content)
+				event = eventDao.create(event, data); // Get the event object
+														// with eventId and
+														// content ids (if there
+														// is some content)
 			}
 			sendToBroker(event);
 			return event;
 		} catch (EmptyResultDataAccessException e) {
-			throw new ThingBrokerException(Constants.CODE_SENT_EVENT_TO_NON_EXISTENT_THING,Utils.getMessage("SENT_EVENT_TO_NON-EXISTENT_THING"));
+			throw new ThingBrokerException(
+					Constants.CODE_SENT_EVENT_TO_NON_EXISTENT_THING,
+					messages.getMessage("SENT_EVENT_TO_NON-EXISTENT_THING"));
 		}
 	}
 
-	public synchronized Event update(Event event, EventData[] data) throws ThingBrokerException {
-		Event storedEvent = EventDAO.retrieveById(event);
+	public synchronized Event update(Event event, EventData[] data)
+			throws ThingBrokerException {
+		Event storedEvent = eventDao.retrieveById(event);
 		if (storedEvent != null) {
-			if(storedEvent.getServerTimestamp().longValue() == event.getServerTimestamp().longValue()) {
-			   event.setThingId(storedEvent.getThingId());
-			   event.setServerTimestamp(System.currentTimeMillis());
-			   return create(event, data, true);
+			if (storedEvent.getServerTimestamp().longValue() == event
+					.getServerTimestamp().longValue()) {
+				event.setThingId(storedEvent.getThingId());
+				event.setServerTimestamp(System.currentTimeMillis());
+				return create(event, data, true);
 			}
-			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_OUTDATED,Utils.getMessage("SERVER_TIMESTAMP_OUTDATED"));
+			throw new ThingBrokerException(
+					Constants.CODE_SERVER_TIMESTAMP_OUTDATED,
+					messages.getMessage("SERVER_TIMESTAMP_OUTDATED"));
 		}
-		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));
+		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,
+				messages.getMessage("EVENT_NOT_FOUND"));
 	}
-	
-	public synchronized Event addDataToInfoField(Event event, HashMap<String, Object> content) throws Exception {
-		Event storedEvent = EventDAO.retrieveById(event);
-		if(storedEvent != null) {
-			if(storedEvent.getServerTimestamp().longValue() == event.getServerTimestamp().longValue()) {
-			   if(storedEvent.getInfo() instanceof Map) {
-			      LinkedHashMap<String,Object> storedInfo = (LinkedHashMap<String,Object>) storedEvent.getInfo();
-			      storedInfo.putAll(content);
-			      return create(storedEvent, null, true);
-			   }
-			   throw new ThingBrokerException(Constants.CODE_INVALID_EVENT_INFO_FIELD, Utils.getMessage("EVENT_INFO_FIELD_INVALID"));
+
+	public synchronized Event addDataToInfoField(Event event,
+			HashMap<String, Object> content) throws Exception {
+		Event storedEvent = eventDao.retrieveById(event);
+		if (storedEvent != null) {
+			if (storedEvent.getServerTimestamp().longValue() == event
+					.getServerTimestamp().longValue()) {
+				if (storedEvent.getInfo() instanceof Map) {
+					LinkedHashMap<String, Object> storedInfo = (LinkedHashMap<String, Object>) storedEvent
+							.getInfo();
+					storedInfo.putAll(content);
+					return create(storedEvent, null, true);
+				}
+				throw new ThingBrokerException(
+						Constants.CODE_INVALID_EVENT_INFO_FIELD,
+						messages.getMessage("EVENT_INFO_FIELD_INVALID"));
 			}
-			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_OUTDATED,Utils.getMessage("SERVER_TIMESTAMP_OUTDATED"));
+			throw new ThingBrokerException(
+					Constants.CODE_SERVER_TIMESTAMP_OUTDATED,
+					messages.getMessage("SERVER_TIMESTAMP_OUTDATED"));
 		}
-		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));
+		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,
+				messages.getMessage("EVENT_NOT_FOUND"));
 	}
 
 	public Event retrieve(Event event) {
-		Event e = EventDAO.retrieveById(event);
-		if(e != null) {
+		Event e = eventDao.retrieveById(event);
+		if (e != null) {
 			return e;
 		}
-		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,Utils.getMessage("EVENT_NOT_FOUND"));
+		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,
+				messages.getMessage("EVENT_NOT_FOUND"));
 	}
 
-	public List<Event> retrieveByCriteria(Event event,Map<String, String> params) throws Exception {
+	public List<Event> retrieveByCriteria(Event event, Map<String, String> params) throws Exception {
 		String requester = params.get("requester");
 		String timeout = params.get("timeout");
-		if(requester != null) {
+		if (requester != null) {
 			params.remove("requester");
 			params.remove("timeout");
 			Map<String, String> searchParam = new HashMap<String, String>();
 			searchParam.put("thingId", requester);
-			List<Thing> req = ThingDAO.retrieve(searchParam);
-			if(req != null && req.size() > 0) {
-				if(!req.get(0).getFollowing().contains(event.getThingId())) {
+			List<Thing> req = thingDao.retrieve(searchParam);
+			// add thing to following list of requester if it is not there already.
+			if (req != null && req.size() > 0) {
+				if (!req.get(0).getFollowing().contains(event.getThingId())) {
 					req.get(0).getFollowing().add(event.getThingId());
 					searchParam.put("thingId", event.getThingId());
-					List<Thing> tToFollow = ThingDAO.retrieve(searchParam);
-					if(tToFollow != null) {
-					  tToFollow.get(0).getFollowers().add(requester);
-					  ThingDAO.update(req.get(0));
-					  ThingDAO.update(tToFollow.get(0));
+					List<Thing> tToFollow = thingDao.retrieve(searchParam);
+					if (tToFollow != null) {
+						tToFollow.get(0).getFollowers().add(requester);
+						thingDao.update(req.get(0));
+						thingDao.update(tToFollow.get(0));
 					}
 				}
-				Set<Event> storedEvents = EventDAO.retrieveEventsFromThing(event, params); //Using set to avoid duplicates
+				// get previous events from the thing
+				Set<Event> storedEvents = eventDao.retrieveEventsFromThing(event, params); // Using set to avoid duplicates
 				List<Event> response = new ArrayList<Event>();
-				if(storedEvents != null && storedEvents.size() > 0) {
+				
+				// if there are some, return them immediately, otherwise get real time events.
+				// note to avoid duplicates must query for events after the last one received.
+				if (storedEvents != null && storedEvents.size() > 0) {
 					response.addAll(storedEvents);
-				}
-				else {
-				   long followingId = realTimeEventService.follow(event.getThingId());
-				   Set<Event> realTimeEvents =  new LinkedHashSet<Event>();
-				   if(timeout != null) {
-				      realTimeEvents = realTimeEventService.getEvents(followingId, Long.valueOf(timeout));
-			 	   }
-				   else {
-				      realTimeEvents = realTimeEventService.getEvents(followingId, Constants.REAL_TIME_EVENTS_WAITING_TIME);					
-				   }
-				   if(realTimeEvents.size() > 0) {
-					   response.addAll(realTimeEvents);
-				   }
+				} else {
+					// subscribe to real time events for the thing, and then get them.
+					// FIXME: we create a new JmsEventHandler every time??  See realTimeEvents.follow()
+					long followingId = realTimeEventService.follow(event.getThingId());
+					Set<Event> realTimeEvents = new LinkedHashSet<Event>();
+					long waitTime = timeout == null ? Constants.REAL_TIME_EVENTS_WAITING_TIME
+							: Long.valueOf(timeout);
+					realTimeEvents = realTimeEventService.getEvents(followingId, waitTime);
+					if (realTimeEvents.size() > 0) {
+						response.addAll(realTimeEvents);
+					}
 				}
 				Collections.sort(response);
 				return response;
 			}
-			throw new ThingBrokerException(Constants.CODE_REQUESTER_NOT_REGISTERED,Utils.getMessage("REQUESTER_NOT_REGISTERED"));
+			throw new ThingBrokerException(
+					Constants.CODE_REQUESTER_NOT_REGISTERED,
+					messages.getMessage("REQUESTER_NOT_REGISTERED"));
 		}
-		throw new ThingBrokerException(Constants.CODE_REQUESTER_NOT_INFORMED,Utils.getMessage("REQUESTER_NOT_INFORMED"));
-	}
-	
-	public EventData retrieveEventData(EventData eventData) throws Exception {
-		EventData data = EventDataDAO.retrieve(eventData);
-		if(data != null) {
-			return data;
-		}
-		throw new ThingBrokerException(Constants.CODE_EVENT_DATA_NOT_FOUND,Utils.getMessage("EVENT_DATA_NOT_FOUND"));
+		throw new ThingBrokerException(Constants.CODE_REQUESTER_NOT_INFORMED,
+				messages.getMessage("REQUESTER_NOT_INFORMED"));
 	}
 
-	public EventData retrieveEventDataInfo(EventData eventData) throws Exception{
-		EventData data = EventDataDAO.retrieve(eventData);
-		if(data != null) {
+	public EventData retrieveEventData(EventData eventData) throws Exception {
+		EventData data = eventDataDao.retrieve(eventData);
+		if (data != null) {
+			return data;
+		}
+		throw new ThingBrokerException(Constants.CODE_EVENT_DATA_NOT_FOUND,
+				messages.getMessage("EVENT_DATA_NOT_FOUND"));
+	}
+
+	public EventData retrieveEventDataInfo(EventData eventData)
+			throws Exception {
+		EventData data = eventDataDao.retrieve(eventData);
+		if (data != null) {
 			data.setData(null);
 			return data;
 		}
-		throw new ThingBrokerException(Constants.CODE_EVENT_DATA_NOT_FOUND,Utils.getMessage("EVENT_DATA_NOT_FOUND"));
+		throw new ThingBrokerException(Constants.CODE_EVENT_DATA_NOT_FOUND,
+				messages.getMessage("EVENT_DATA_NOT_FOUND"));
 	}
-	
+
 	private void sendToBroker(final Event event) {
-		Destination destination = new ActiveMQTopic("thingbroker.things.thing." + event.getThingId());
+		Destination destination = new ActiveMQTopic("thingbroker.things.thing."
+				+ event.getThingId());
 		jmsTemplate.send(destination, new MessageCreator() {
 			public Message createMessage(Session session) throws JMSException {
 				MapMessage message = session.createMapMessage();

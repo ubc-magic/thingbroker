@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +18,7 @@ import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
-import ca.ubc.magic.utils.Utils;
+import ca.ubc.magic.utils.Messages;
 
 @Controller
 @RequestMapping("/thing")
@@ -28,12 +27,10 @@ public class ThingController {
 	private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 	
 	private ThingService thingService;
+	private final Messages messages;
 	
-	public ThingController() {
-
-	}
-	
-	public ThingController(ThingService thingService) {
+	public ThingController(ThingService thingService, Messages messages) {
+		this.messages = messages;
 		this.thingService = thingService;
 	}
 	
@@ -75,7 +72,7 @@ public class ThingController {
 		  if(t != null) {
 			  return t;
 		  }
-		  return new StatusMessage(Constants.CODE_THING_NOT_FOUND, Utils.getMessage("THING_NOT_FOUND"));
+		  return new StatusMessage(Constants.CODE_THING_NOT_FOUND, messages.getMessage("THING_NOT_FOUND"));
         }
 		catch(Exception ex) {
 			ex.printStackTrace();

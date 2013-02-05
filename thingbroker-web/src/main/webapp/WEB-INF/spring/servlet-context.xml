@@ -27,12 +27,17 @@
 	<beans:bean id="thingController"
 		class="ca.ubc.magic.thingbroker.controller.ThingController">
 		<beans:constructor-arg ref="thingService" />
+		<beans:constructor-arg ref="messages"/>
 	</beans:bean>
 
 	<beans:bean id="eventController"
 		class="ca.ubc.magic.thingbroker.controller.EventController">
 		<beans:constructor-arg ref="eventService" />
+		<beans:constructor-arg ref="messages"/>
+	</beans:bean>
+	
+	<beans:bean id="homeController"
+		class="ca.ubc.magic.thingbroker.HomeController">
 	</beans:bean>
 
-	<context:component-scan base-package="ca.ubc.magic.thingbroker" />
 </beans:beans>

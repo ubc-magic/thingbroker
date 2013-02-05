@@ -6,28 +6,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 
-import ca.ubc.magic.thingbroker.controller.config.SpringMongoConfig;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 
 public class EventDAO {
+		
+	private MongoOperations mongoOperation;
+	private EventDataDAO eventDataDao;
 	
-	private static ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringMongoConfig.class);
-	private static MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoDBTemplate");
+	public EventDAO(MongoOperations mongoOperation, EventDataDAO eventDataDao) {
+		this.mongoOperation = mongoOperation;
+		this.eventDataDao = eventDataDao;
+	}
 	
-	public static Event create(Event event, EventData[] data) {
+	public Event create(Event event, EventData[] data) {
 		if(data != null) {
 		  List<String> eventData = new ArrayList<String>();
 		  for(EventData eData : data) {
 		      eventData.add(eData.getContentId());
-		      EventDataDAO.create(eData);
+		      eventDataDao.create(eData);
 		  }
 		  event.setData(eventData);
 		}
@@ -35,12 +37,12 @@ public class EventDAO {
 		return event;
 	}
 	
-	public static Event retrieveById(Event event) {
+	public Event retrieveById(Event event) {
 		Query q = new Query(Criteria.where("eventId").is(event.getEventId()));
 		return mongoOperation.findOne(q, Event.class, "events");
 	}
 	
-	public static Set<Event> retrieveEventsFromThing(Event event, Map<String, String> params) {
+	public Set<Event> retrieveEventsFromThing(Event event, Map<String, String> params) {
 		if(params.size() == 0) {
 		  Query q = new Query(Criteria.where("thingId").is(event.getThingId())).limit(25); //It will provide a maximum of 25 events
 		  q.sort().on("serverTimestamp", Order.DESCENDING);
@@ -71,16 +73,16 @@ public class EventDAO {
 		return new LinkedHashSet<Event>();
 	}
 	
-    public static void update(Event event) {
+    public void update(Event event) {
         mongoOperation.save(event,"events");
     }
     
-    public static void delete(Event event) {
+    public void delete(Event event) {
 		Query q = new Query(Criteria.where("eventId").is(event.getEventId()));
 		mongoOperation.remove(q, "events");
     }
     
-    public static void deleteFromThing(Event event) {
+    public void deleteFromThing(Event event) {
 		Query q = new Query(Criteria.where("thingId").is(event.getThingId()));
 		mongoOperation.remove(q, "events");
     }

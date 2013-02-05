@@ -1,20 +1,28 @@
 package ca.ubc.magic.thingbroker.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.ArrayList;
 
 import ca.ubc.magic.thingbroker.controller.config.Constants;
 import ca.ubc.magic.thingbroker.controller.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
-import ca.ubc.magic.utils.Utils;
+import ca.ubc.magic.utils.Messages;
 
 public class ThingServiceImpl implements ThingService {
 
+	private ThingDAO thingDao;
+	private final Messages messages;
+	
+	public ThingServiceImpl(ThingDAO thingDao, Messages messages) {
+		this.thingDao = thingDao;
+		this.messages = messages;
+	}
+	
 	public Thing storeThing(Thing thing) throws ThingBrokerException {
 		if (thing.getThingId() == null || thing.getThingId().equals("")) {
 			thing.setThingId(UUID.randomUUID().toString());
@@ -23,17 +31,17 @@ public class ThingServiceImpl implements ThingService {
 			searchParam.put("thingId", thing.getThingId());
 			List<Thing> storedThings = getThing(searchParam);
 			if (storedThings != null && storedThings.size() > 0) {
-				throw new ThingBrokerException(Constants.CODE_THING_ALREADY_REGISTERED,Utils.getMessage("THING_ALREADY_REGISTERED"));
+				throw new ThingBrokerException(Constants.CODE_THING_ALREADY_REGISTERED,messages.getMessage("THING_ALREADY_REGISTERED"));
 			}
 		}
-		ThingDAO.create(thing);
+		thingDao.create(thing);
 		updateFollowingAndFollowersList(thing);
 		return thing;
 	}
 
 	public List<Thing> getThing(Map<String, String> searchParams)
 			throws ThingBrokerException {
-		List<Thing> t = ThingDAO.retrieve(searchParams);
+		List<Thing> t = thingDao.retrieve(searchParams);
 		if (t != null && t.size() > 0) {
 			return t;
 		}
@@ -48,7 +56,7 @@ public class ThingServiceImpl implements ThingService {
 		if (storedThings != null) {
 			return storedThings.get(0).getMetadata();
 		}
-		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,Utils.getMessage("THING_NOT_FOUND"));
+		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,messages.getMessage("THING_NOT_FOUND"));
 	}
 
 	public synchronized Thing addMetadata(Thing thing) throws ThingBrokerException {
@@ -57,38 +65,38 @@ public class ThingServiceImpl implements ThingService {
 		List<Thing> thingToUpdate = getThing(searchParams);
 		if (thingToUpdate != null && thingToUpdate.size() > 0) {
 			thingToUpdate.get(0).getMetadata().putAll(thing.getMetadata());
-			return ThingDAO.putMetadata(thingToUpdate.get(0));
+			return thingDao.putMetadata(thingToUpdate.get(0));
 		}
 		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-				Utils.getMessage("THING_NOT_FOUND"));
+				messages.getMessage("THING_NOT_FOUND"));
 	}
 
 	public Thing followThings(Thing thing, String[] thingsToFollow)
 			throws ThingBrokerException {
 		Map<String, String> searchParams = new HashMap<String, String>();
 		searchParams.put("thingId", thing.getThingId());
-		Thing t = ThingDAO.retrieve(searchParams).get(0);
+		Thing t = thingDao.retrieve(searchParams).get(0);
 		if (t != null) {
 			for (String thingToFollow : thingsToFollow) {
 				if(!thingToFollow.equals(thing.getThingId())) {
 				  t.getFollowing().add(thingToFollow);
 				  searchParams.put("thingId", thingToFollow);
-				  List<Thing> result = ThingDAO.retrieve(searchParams);
+				  List<Thing> result = thingDao.retrieve(searchParams);
 				  if(result != null && result.size() > 0) {
-				    Thing tToFollow = ThingDAO.retrieve(searchParams).get(0);
+				    Thing tToFollow = thingDao.retrieve(searchParams).get(0);
 				    tToFollow.getFollowers().add(thing.getThingId());
-                    ThingDAO.update(t);
-				    ThingDAO.update(tToFollow);
+				    thingDao.update(t);
+				    thingDao.update(tToFollow);
 				  }
 				  else {
 				     throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-						Utils.getMessage("THING_NOT_FOUND") + " - Thing id: " + thingToFollow);
+				    		 messages.getMessage("THING_NOT_FOUND") + " - Thing id: " + thingToFollow);
 				  }
 				}
 			}
 		} else {
 			throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-					Utils.getMessage("THING_NOT_FOUND") + " - Thing id: " + thing.getThingId());
+					messages.getMessage("THING_NOT_FOUND") + " - Thing id: " + thing.getThingId());
 		}
 		return t;
 	}
@@ -97,22 +105,22 @@ public class ThingServiceImpl implements ThingService {
 			throws ThingBrokerException {
 		Map<String, String> searchParams = new HashMap<String, String>();
 		searchParams.put("thingId", thing.getThingId());
-		Thing t = ThingDAO.retrieve(searchParams).get(0);
+		Thing t = thingDao.retrieve(searchParams).get(0);
 		if (t != null) {
 			for (String thingToUnfollow : thingsToUnfollow) {
 				t.getFollowing().remove(thingToUnfollow);
 				searchParams.put("thingId", thingToUnfollow);
-				List<Thing> result = ThingDAO.retrieve(searchParams);
+				List<Thing> result = thingDao.retrieve(searchParams);
 				if(result != null && result.size() > 0) {
 				  Thing tToFollow = result.get(0);
 				  tToFollow.getFollowers().remove(thing.getThingId());
-				  ThingDAO.update(tToFollow);
+				  thingDao.update(tToFollow);
 				}
 			}
-			ThingDAO.update(t);
+			thingDao.update(t);
 		} else {
 			throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-					Utils.getMessage("THING_NOT_FOUND"));
+					messages.getMessage("THING_NOT_FOUND"));
 		}
 		return t;
 	}
@@ -151,10 +159,10 @@ public class ThingServiceImpl implements ThingService {
 			storedThing = getThing(searchParam).get(0);
 			thing.setFollowing(storedThing.getFollowing());
 			thing.setFollowers(storedThing.getFollowers());
-			return ThingDAO.update(thing);
+			return thingDao.update(thing);
 		}
 		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-				Utils.getMessage("THING_NOT_FOUND"));
+				messages.getMessage("THING_NOT_FOUND"));
 	}
 
 	public Thing delete(Thing id) throws ThingBrokerException {
@@ -162,11 +170,11 @@ public class ThingServiceImpl implements ThingService {
 		searchParam.put("thingId", id.getThingId());
 		List<Thing> storedThings = getThing(searchParam);
 		if (storedThings != null) {
-			ThingDAO.delete(id);
+			thingDao.delete(id);
 			return storedThings.get(0);
 		}
 		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
-				Utils.getMessage("THING_NOT_FOUND"));
+				messages.getMessage("THING_NOT_FOUND"));
 	}
 
 	private void updateFollowingAndFollowersList(Thing thing) {
@@ -174,15 +182,15 @@ public class ThingServiceImpl implements ThingService {
 		if (thing.getFollowing() != null && thing.getFollowing().size() > 0) {
 			for (String thingToFollow : thing.getFollowing()) {
 				searchParams.put("thingId", thingToFollow);
-				List<Thing> list = ThingDAO.retrieve(searchParams);
+				List<Thing> list = thingDao.retrieve(searchParams);
 				if (list != null && list.size() > 0) {
 					Thing tToFollow = list.get(0);
 					tToFollow.getFollowers().add(thing.getThingId());
-					ThingDAO.update(tToFollow);
+					thingDao.update(tToFollow);
 				} else {
 					throw new ThingBrokerException(
 							Constants.CODE_THING_NOT_FOUND,
-							Utils.getMessage("THING_NOT_FOUND")
+							messages.getMessage("THING_NOT_FOUND")
 									+ " - Thing id: " + thingToFollow);
 				}
 			}
@@ -190,15 +198,15 @@ public class ThingServiceImpl implements ThingService {
 		if (thing.getFollowers() != null && thing.getFollowers().size() > 0) {
 			for (String follower : thing.getFollowers()) {
 				searchParams.put("thingId", follower);
-				List<Thing> list = ThingDAO.retrieve(searchParams);
+				List<Thing> list = thingDao.retrieve(searchParams);
 				if (list != null && list.size() > 0) {
 					Thing tFollower = list.get(0);
 					tFollower.getFollowing().add(thing.getThingId());
-					ThingDAO.update(tFollower);
+					thingDao.update(tFollower);
 				} else {
 					throw new ThingBrokerException(
 							Constants.CODE_THING_NOT_FOUND,
-							Utils.getMessage("THING_NOT_FOUND")
+							messages.getMessage("THING_NOT_FOUND")
 									+ " - Thing id: " + follower);
 				}
 			}

@@ -1,30 +1,29 @@
 package ca.ubc.magic.thingbroker.controller.dao;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import ca.ubc.magic.thingbroker.controller.config.SpringMongoConfig;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 
 public class EventDataDAO {
-	private static ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringMongoConfig.class);
-	private static MongoOperations mongoOperation = (MongoOperations) ctx.getBean("mongoStorageTemplate");
+	private final MongoOperations mongoOperations;
 	
-	public static void create(EventData data) {
-		mongoOperation.save(data,"eventcontent");
+	public EventDataDAO(MongoOperations mongoOperations) {
+		this.mongoOperations = mongoOperations;
+	}
+	public void create(EventData data) {
+		mongoOperations.save(data,"eventcontent");
 	}
 	
-	public static EventData retrieve(EventData data) {
+	public EventData retrieve(EventData data) {
 		Query q = new Query(Criteria.where("contentId").is(data.getContentId()));
-		return mongoOperation.findOne(q, EventData.class, "eventcontent");
+		return mongoOperations.findOne(q, EventData.class, "eventcontent");
 	}
 	
-    public static void delete(Event event) {
+    public void delete(Event event) {
 		Query q = new Query(Criteria.where("contentId").is(event.getEventId()));
-		mongoOperation.remove(q, "eventcontent");
+		mongoOperations.remove(q, "eventcontent");
     }
 }

@@ -27,21 +27,19 @@ import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
-import ca.ubc.magic.utils.Utils;
+import ca.ubc.magic.utils.Messages;
 
 @Controller
 @RequestMapping("/events")
 public class EventController {
 	private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
-	private EventService eventService;
+	private final EventService eventService;
+	private final Messages messages;
 
-	public EventController() {
-
-	}
-
-	public EventController(EventService eventService) {
+	public EventController(EventService eventService, Messages messages) {
 		this.eventService = eventService;
+		this.messages = messages;
 	}
 
 	@RequestMapping(value = "/event/thing/{thingId}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
@@ -104,7 +102,7 @@ public class EventController {
 				return eventService.update(updatedEvent, null);	
 			 }
 			}
-			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_NOT_PROVIDED,Utils.getMessage("SERVER_TIMESTAMP_NOT_PROVIDED"));
+			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_NOT_PROVIDED,messages.getMessage("SERVER_TIMESTAMP_NOT_PROVIDED"));
 		} catch (ThingBrokerException ex) {
 			ex.printStackTrace();
 			logger.debug(ex.getMessage());
@@ -144,7 +142,7 @@ public class EventController {
  		          return eventService.addDataToInfoField(updatedEvent, content); 
    			   }
         	}
-			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_NOT_PROVIDED,Utils.getMessage("SERVER_TIMESTAMP_NOT_PROVIDED"));
+			throw new ThingBrokerException(Constants.CODE_SERVER_TIMESTAMP_NOT_PROVIDED,messages.getMessage("SERVER_TIMESTAMP_NOT_PROVIDED"));
         }
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();
