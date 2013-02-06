@@ -50,7 +50,7 @@
 
 	<task:scheduler id="myScheduler"/>
 
-	<bean id="realTimeEventService" class="ca.ubc.magic.thingbroker.services.realtime.RealTimeThingEventServiceImpl">
+	<bean id="realTimeEventService" class="ca.ubc.magic.thingbroker.services.realtime.RealTimeEventServiceImpl">
 		<constructor-arg ref="connectionFactory"/>
 	</bean>
 
