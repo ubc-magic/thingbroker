@@ -1,16 +1,49 @@
 package ca.ubc.magic.thingbroker.services.interfaces;
 
 import java.util.List;
-import java.util.Set;
 
 import ca.ubc.magic.thingbroker.model.Event;
-import ca.ubc.magic.thingbroker.model.Follow;
 
+/**
+ * Service for handling real time events from things.
+ * 
+ * @author mike
+ *
+ */
 public interface RealTimeEventService {
-	public long follow(String thingId);
-	public void addToSubscription(long id, String name);
-	public void unsubscribe(long subId);
-	public Set<Event> getEvents(long id, long waitTime) throws Exception;
-	public List<Follow> getFollows();
-	public Follow getFollow(long id) throws Exception;
+	
+	/**
+	 * Send event to thing
+	 * 
+	 * @param thingId
+	 * @param event
+	 */
+	public void sendEvent(String thingId, Event event);
+	
+	/**
+	 * Follow thing
+	 * @param thingId thing
+	 * @param followedThing the thing to follow
+	 * @return
+	 */
+	public void follow(String thingId, String followedThing);
+	
+	/**
+	 * Unfollow thing
+	 * 
+	 * @param thingId
+	 * @param followedThing
+	 * @return
+	 */
+	public void unfollow(String thingId, String followedThing);
+	
+	/**
+	 * Get events from the thing and its followers
+	 * 
+	 * @param thingId
+	 * @param waitTime
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Event> getEvents(String thingId, long waitTime) throws Exception;
 }

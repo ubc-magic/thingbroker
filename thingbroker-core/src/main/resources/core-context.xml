@@ -4,10 +4,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/jdbc
 	http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+	http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task-3.0.xsd
 	http://activemq.apache.org/schema/core
 	http://activemq.apache.org/schema/core/activemq-core.xsd">
 
@@ -15,8 +18,7 @@
 		<constructor-arg>
 			<bean
 				class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-<!-- 				<property name="basename" value="/ca/ubc/magic/thingbroker/language/thingbroker_messages"></property>
- -->				<property name="basename" value="/WEB-INF/thingbroker_messages"></property>
+					<property name="basename" value="/WEB-INF/thingbroker_messages"></property>
 			</bean>
 		</constructor-arg>
 	</bean>
@@ -38,8 +40,17 @@
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="jmsFactory" />
  	</bean>
- 	
-	<bean id="realTimeEventService" class="ca.ubc.magic.thingbroker.services.realtime.RealTimeEventServiceImpl">
+	
+	<!-- call cleanup every 30 seconds to see if we can dump any ThingEventHandlers -->
+	<task:scheduled-tasks scheduler="myScheduler">
+		<task:scheduled ref="realTimeEventService" method="cleanUp" fixed-delay="30000"/>
+		<!-- can add other timer tasks here, may want to add more threads to the scheduler below -->
+<!--     <task:scheduled ref="beanC" method="methodC" cron="*/5 * * * * MON-FRI"/>  -->
+	</task:scheduled-tasks>
+
+	<task:scheduler id="myScheduler"/>
+
+	<bean id="realTimeEventService" class="ca.ubc.magic.thingbroker.services.realtime.RealTimeThingEventServiceImpl">
 		<constructor-arg ref="connectionFactory"/>
 	</bean>
 

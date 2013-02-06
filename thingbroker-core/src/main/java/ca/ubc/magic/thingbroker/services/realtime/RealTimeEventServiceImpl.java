@@ -1,10 +1,12 @@
+/**
+ * 
+ */
 package ca.ubc.magic.thingbroker.services.realtime;
 
-import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.Connection;
@@ -20,18 +22,23 @@ import org.springframework.beans.factory.DisposableBean;
 
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
-import ca.ubc.magic.thingbroker.model.Follow;
 import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
 
-public class RealTimeEventServiceImpl implements RealTimeEventService,DisposableBean {
-	private static final Log logger = LogFactory.getLog(RealTimeEventServiceImpl.class);
-	private static long nextId = 0;
+/**
+ * @author mike
+ *
+ */
+public class RealTimeEventServiceImpl implements RealTimeEventService, DisposableBean {
+	private static final Log logger = LogFactory.getLog(RealTimeEventService.class);
 
-	private Map<Long, JmsEventHandler> following;
+	/**
+	 * things that the system is currently tracking for real time events
+	 */
+	private Map<String, ThingEventHandler> things;
 	private Connection connection;
 
 	public RealTimeEventServiceImpl(ConnectionFactory connectionFactory) {
-		this.following = new ConcurrentHashMap<Long, JmsEventHandler>();
+		this.things = new ConcurrentHashMap<String, ThingEventHandler>();
 		this.connection = null;
 		try {
 			// we start the connection -- adding sessions doesn't seem to be a problem
@@ -42,68 +49,101 @@ public class RealTimeEventServiceImpl implements RealTimeEventService,Disposable
 			throw new ThingBrokerException("JMS Exception on startup", e);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeThingEventService#sendEvent(java.lang.String, ca.ubc.magic.thingbroker.model.Event)
+	 */
+	public void sendEvent(String thingId, Event event) {
+		// TODO Auto-generated method stub
+		// consider moving event sending to JMS broker here, so its all in one place?
 
-	public long follow(String thingId) {
-		return doFollow(thingId, null, null);
 	}
 
-	private long doFollow(String thingId, String url, EventHandler eventHandler) {
-		Follow follow = new Follow();
-		follow.setId(nextId + 1);
-		nextId++;
-		List<String> followers = new ArrayList<String>();
-		followers.add(thingId);
-		follow.setFollowers(followers);
+	/* (non-Javadoc)
+	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeThingEventService#follow(java.lang.String, java.lang.String)
+	 */
+	public void follow(String thingId, String followedThing) {
 		
+		// first see if we are alreading getting real time messages for the thing
+		ThingEventHandler thingHandler = things.get(thingId);
+		Session session;
 		try {
-			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			Destination thingQueue = session.createTopic("thingbroker.things.thing." + thingId);
+			if (thingHandler != null) {
+				// already following - nothing to do
+				if (thingHandler.isFollowing(followedThing))
+					return;
+				
+				// use the same session for a single thing
+				session = thingHandler.getSession();
+			} else {
+				// otherwise make a new session and handler and add it to the map
+				session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+				thingHandler = new ThingEventHandler(session);
+				// add it for next time
+				things.put(thingId, thingHandler);
+			}
+			// now build a new destination and a consumer for the thing's JMS session, add it to the
+			// event handler and start listening.
+			Destination thingQueue = session.createTopic("thingbroker.things.thing." + followedThing);
 			MessageConsumer consumer = session.createConsumer(thingQueue);
-			JmsEventHandler s = new JmsEventHandler(follow, session, consumer);
-			consumer.setMessageListener(s);
-			following.put(follow.getId(), s);
+			thingHandler.addFollower(followedThing, consumer);
+			consumer.setMessageListener(thingHandler);
+
 		} catch (JMSException e) {
 			logger.error(e.getMessage());
-			throw new ThingBrokerException("JMS Exception occurred when subscribing", e);
+			throw new ThingBrokerException(
+					"JMS Exception occurred when subscribing", e);
 		}
-		return follow.getId();
+
 	}
 
-	public void addToSubscription(long id, String name) {
-		// add another topic to an existing subscription
-		// this may be done by having the JmsSubscription's session have multiple consumers, then shut them all down.
-		// currently not supported.
-
-		// sub get session
-		// consumer.sub.createConsumer(topic)
-		// s.addConsumer(consumer) - this will call consumer.setMessageListener(this), and add it to the list of consumers
-		throw new UnsupportedOperationException("TODO");
+	/* (non-Javadoc)
+	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeThingEventService#unfollow(java.lang.String, java.lang.String)
+	 */
+	public void unfollow(String thingId, String followedThing) {
+		// TODO Auto-generated method stub
+		ThingEventHandler thingHandler = things.get(thingId);
+		if (thingHandler == null)
+			return;
+		thingHandler.removeFollower(followedThing);
 	}
 
-	public void unsubscribe(long subId) {
-		JmsEventHandler sub = following.get(subId);
-		sub.cleanUp();
-		following.remove(subId);
+	/* (non-Javadoc)
+	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeThingEventService#getEvents(java.lang.String, long)
+	 */
+	public List<Event> getEvents(String thingId, long waitTime) throws Exception {
+		
+		ThingEventHandler thingHandler = things.get(thingId);
+		if (thingHandler == null)
+			return new ArrayList<Event>();
+		
+		return thingHandler.getEvents(waitTime);
 	}
 
-	public Set<Event> getEvents(long id, long waitTime) throws Exception {
-		JmsEventHandler sub = following.get(id);
-		return sub.getEvents(waitTime);
-	}
-
-	public List<Follow> getFollows() {
-		List<Follow> subs = new ArrayList<Follow>();
-		for (Long key: following.keySet()) {
-			subs.add(following.get(key).getFollow());
-		}
-		return subs;
-	}
-
-	public Follow getFollow(long id) throws Exception {
-		return following.get(id).getFollow();
-	}
-
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.DisposableBean#destroy()
+	 */
 	public void destroy() throws Exception {
-		connection.close();
+		// shut down gracefully
+		for (ThingEventHandler thingHandler: things.values()) {
+			thingHandler.cleanUp();
+		}
+		this.connection.close();
 	}
+	
+	/**
+	 * Call clean up periodically to shut down unused thingHandlers and their associated session and 
+	 * message consumers that are no longer being used.
+	 * 
+	 */
+	public void cleanUp() {
+		for (Entry<String, ThingEventHandler> entry: things.entrySet()) {
+			ThingEventHandler eventHandler = entry.getValue();
+			if (eventHandler.isExpired()) {
+				things.remove(entry.getKey());
+				eventHandler.cleanUp();
+			}
+		}
+	}
+
 }

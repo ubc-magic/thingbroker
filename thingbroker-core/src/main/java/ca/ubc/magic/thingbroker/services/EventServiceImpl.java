@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,13 +154,11 @@ public class EventServiceImpl implements EventService {
 				if (storedEvents != null && storedEvents.size() > 0) {
 					response.addAll(storedEvents);
 				} else {
-					// subscribe to real time events for the thing, and then get them.
-					// FIXME: we create a new JmsEventHandler every time??  See realTimeEvents.follow()
-					long followingId = realTimeEventService.follow(event.getThingId());
-					Set<Event> realTimeEvents = new LinkedHashSet<Event>();
+					// requester should follow the thing if it isn't already
+					realTimeEventService.follow(requester, event.getThingId());
 					long waitTime = timeout == null ? Constants.REAL_TIME_EVENTS_WAITING_TIME
 							: Long.valueOf(timeout);
-					realTimeEvents = realTimeEventService.getEvents(followingId, waitTime);
+					List<Event> realTimeEvents = realTimeEventService.getEvents(requester, waitTime);
 					if (realTimeEvents.size() > 0) {
 						response.addAll(realTimeEvents);
 					}
