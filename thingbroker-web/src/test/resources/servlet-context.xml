@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <beans:import resource="classpath:core-context.xml" />
+
+	<beans:bean id="thingController"
+		class="ca.ubc.magic.thingbroker.controller.ThingController">
+		<beans:constructor-arg ref="thingService" />
+		<beans:constructor-arg ref="messages" />
+	</beans:bean>
+
+<!-- 	<beans:bean id="thingService" class="org.mockito.Mockito"
+		factory-method="mock">
+		<beans:constructor-arg
+			value="ca.ubc.magic.thingbroker.services.ThingServiceImpl" />
+	</beans:bean>
+
+
+	<beans:bean name="messages" class="org.mockito.Mockito"
+		factory-method="mock">
+		<beans:constructor-arg value="ca.ubc.magic.utils.Messages"/>
+	</beans:bean>
+ -->
+
+</beans:beans>

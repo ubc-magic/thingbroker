@@ -20,11 +20,17 @@ import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
 import ca.ubc.magic.utils.Messages;
 
+/**
+ * This controller deals with things.
+ * 
+ * @author mike
+ *
+ */
 @Controller
-@RequestMapping("/thing")
+@RequestMapping("/things")
 public class ThingController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(EventController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ThingController.class);
 	
 	private ThingService thingService;
 	private final Messages messages;
@@ -64,7 +70,7 @@ public class ThingController {
 		}
 	}
 	
-	@RequestMapping(value = "/search",method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Object retrieveThing(@RequestParam Map<String, String> params) {
         try {
@@ -100,77 +106,4 @@ public class ThingController {
 		}
 	}	
 	
-	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Object retrieveThingMetadata(@PathVariable String thingId) {
-		try {
-		  return thingService.getThingMetadata(new Thing(thingId));
-		}
-		catch(ThingBrokerException ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
-		}
-	}
-	
-	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.POST, consumes ="application/json", produces = "application/json")
-	@ResponseBody
-	public Object addThingMetadata(@PathVariable String thingId, @RequestBody Map<String,Object> metadata) {
-		try {
-		  Thing thing = new Thing(thingId);
-		  thing.setMetadata(metadata);
-		  return thingService.addMetadata(thing);
-		}
-		catch(ThingBrokerException ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
-		}
-	}
-	
-	@RequestMapping(value = "/{thingId}/follow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	@ResponseBody
-	public Object followThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
-		try {
-		    return thingService.followThings(new Thing(thingId), thingsToFollow);
-		}
-		catch(ThingBrokerException ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
-		}
-	}
-
-	@RequestMapping(value = "/{thingId}/unfollow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	@ResponseBody
-	public Object unfollowThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
-		try {
-		    return thingService.unfollowThings(new Thing(thingId), thingsToFollow);
-		}
-		catch(ThingBrokerException ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
-		}
-	}
 }

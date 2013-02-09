@@ -6,12 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -197,62 +194,6 @@ public class EventController {
 		}
 	}
 	
-	@RequestMapping(value = "/event/content/{contentId}", method = RequestMethod.GET)
-	@ResponseBody
-	public Object getEventData(@PathVariable String contentId, @RequestParam("mustAttach") boolean mustAttach,
-			HttpServletResponse response) {
-		try {
-			EventData data = eventService.retrieveEventData(new EventData(contentId));
-			if (data != null) {
-				response.setContentType(data.getMimeType());
-				response.setContentLength(data.getData().length);
-				if (!data.getMimeType().equals("application/json")) {
-					if(mustAttach) {
-						response.setHeader("Content-Disposition",	"attachment; filename=\"" + data.getName() + "\"");	
-					}
-				}
-				try {
-					if(mustAttach) {
-					   FileCopyUtils.copy(data.getData(),response.getOutputStream());
-					}
-					else {
-					   response.getOutputStream().write(data.getData());
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}		
-		catch(ThingBrokerException ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
-		}
-		return null;
-	}
-	
-	@RequestMapping(value = "/event/content-info/{contentId}", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public Object getEventContentInfo(@PathVariable String contentId) {
-		try {
-			return eventService.retrieveEventDataInfo(new EventData(contentId));
-		}		
-		catch(ThingBrokerException ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-			logger.debug(ex.getMessage());
-			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
-		}
-	}
 	
 	@RequestMapping(value = "/event/{eventId}/contents-description", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody

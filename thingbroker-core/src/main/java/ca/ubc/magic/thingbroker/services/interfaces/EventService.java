@@ -9,11 +9,37 @@ import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 
 public interface EventService {
-   public Event create(Event event, EventData [] data, boolean mustSave);
-   public Event update(Event event, EventData [] data) throws ThingBrokerException;
-   public Event retrieve(Event event);
-   public List<Event> retrieveByCriteria(Event event, Map<String, String> params) throws Exception;
-   public EventData retrieveEventData(EventData eventData) throws Exception;
-   public EventData retrieveEventDataInfo(EventData eventData) throws Exception;
-   public Event addDataToInfoField(Event event, HashMap<String, Object> content) throws Exception;
+	public Event create(Event event, EventData[] data, boolean mustSave);
+
+	/**
+	 * Update event data
+	 * 
+	 * @param event
+	 * @param data
+	 * @return
+	 * @throws ThingBrokerException
+	 */
+	public Event update(Event event, EventData[] data)
+			throws ThingBrokerException;
+
+	public Event retrieve(Event event);
+
+	public List<Event> retrieveByCriteria(Event event,
+			Map<String, String> params) throws Exception;
+
+	public EventData retrieveEventData(EventData eventData) throws Exception;
+
+	public EventData retrieveEventDataInfo(EventData eventData)
+			throws Exception;
+
+	/**
+	 * Update the info field
+	 * 
+	 * @param event
+	 * @param info
+	 * @return
+	 * @throws Exception
+	 */
+	public Event addDataToInfoField(Event event, HashMap<String, Object> info)
+			throws Exception;
 }

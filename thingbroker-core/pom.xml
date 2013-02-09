@@ -12,13 +12,18 @@
 	<description>This project contains the core logic for the thing broker.  Include it to use the thing broker functionality in your application.</description>
 	<properties>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-		<spring.framework.version>3.0.6.RELEASE</spring.framework.version>
+		<spring.framework.version>3.2.1.RELEASE</spring.framework.version>
 	</properties>
 	<repositories>
 		<repository>
 			<id>spring-milestone</id>
 			<name>Spring Maven MILESTONE Repository</name>
 			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+		<repository>
+			<id>repository.springsource.release</id>
+			<name>SpringSource GA Repository</name>
+			<url>http://repo.springsource.org/release</url>
 		</repository>
 	</repositories>
 	<dependencies>
