@@ -1,8 +1,5 @@
 package ca.ubc.magic.thingbroker.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -17,11 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.ubc.magic.thingbroker.controller.config.Constants;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
-import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
-import ca.ubc.magic.utils.Messages;
 
 /**
  * This controller deals with (event) content.
