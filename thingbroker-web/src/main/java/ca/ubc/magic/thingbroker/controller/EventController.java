@@ -27,7 +27,6 @@ import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 import ca.ubc.magic.utils.Messages;
 
 @Controller
-@RequestMapping("/events")
 public class EventController {
 	private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
@@ -39,7 +38,15 @@ public class EventController {
 		this.messages = messages;
 	}
 
-	@RequestMapping(value = "/event/thing/{thingId}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	/**
+	 * Send a new event to the thing.
+	 * 
+	 * @param thingId
+	 * @param keepStored
+	 * @param content
+	 * @return
+	 */
+	@RequestMapping(value = "/things/{thingId}/events", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Object postEvent(@PathVariable String thingId,
 			@RequestParam("keep-stored") boolean keepStored,
@@ -63,7 +70,15 @@ public class EventController {
 		}
 	}
 
-	@RequestMapping(value = "/event/thing/{thingId}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "application/json")
+	/**
+	 * Send a new event to the thing containing content
+	 * 
+	 * @param thingId
+	 * @param keepStored
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/things/{thingId}/events", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "application/json")
 	@ResponseBody
 	public Object postEventWithMultipartContent(@PathVariable String thingId,
 			@RequestParam("keep-stored") boolean keepStored,
@@ -86,7 +101,15 @@ public class EventController {
 		}
 	}
 
-	@RequestMapping(value="/event/{eventId}",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	/**
+	 * Update the event with the specified id
+	 * 
+	 * @param eventId
+	 * @param info
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value="/events/{eventId}",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Object updateEvent(@PathVariable String eventId, @RequestBody Map<String,Object> info,@RequestParam Map<String, String> params) {
 		try {
@@ -111,7 +134,14 @@ public class EventController {
 		}
 	}
 	
-	@RequestMapping(value="/event/{eventId}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "application/json")
+	/**
+	 * Update the event with the specified ID by adding content to it.
+	 * 
+	 * @param eventId
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/events/{eventId}", method = RequestMethod.POST, consumes = "multipart/form-data", produces = "application/json")
 	@ResponseBody
 	public Object updateEventWithMultipartContent(@PathVariable String eventId, MultipartHttpServletRequest request) {
 		try {
@@ -127,7 +157,15 @@ public class EventController {
 		}
 	}
 	
-	@RequestMapping(value = "/event/{eventId}", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	/**
+	 * Update an event with content with the specified info
+	 * 
+	 * @param eventId
+	 * @param content
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value = "/events/{eventId}", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Object addEventInfoData(@PathVariable String eventId, @RequestBody HashMap<String, Object> content,@RequestParam Map<String, String> params) {
         try {
@@ -153,10 +191,16 @@ public class EventController {
 		}
 	}
 	
-	@RequestMapping(value = "/thing/{thingId}", method = RequestMethod.GET)
+	/**
+	 * Get events from the thing and its followers
+	 * 
+	 * @param thingId
+	 * @param params
+	 * @return
+	 */
+	@RequestMapping(value = "/things/{thingId}/events", method = RequestMethod.GET)
 	@ResponseBody
-	public Object getThingEvents(@PathVariable String thingId,
-			@RequestParam Map<String, String> params) {
+	public Object getThingEvents(@PathVariable String thingId, @RequestParam Map<String, String> params) {
 		try {
 			Event event = new Event();
 			event.setThingId(thingId);
@@ -173,8 +217,15 @@ public class EventController {
 			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
 		}
 	}
+	
 
-	@RequestMapping(value = "/event/{eventId}", method = RequestMethod.GET)
+	/**
+	 * Get a single event
+	 * 
+	 * @param eventId
+	 * @return
+	 */
+	@RequestMapping(value = "/events/{eventId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object getThingEvent(@PathVariable String eventId) {
 		try {
@@ -195,7 +246,13 @@ public class EventController {
 	}
 	
 	
-	@RequestMapping(value = "/event/{eventId}/contents-description", method = RequestMethod.GET, produces = "application/json")
+	/**
+	 * Get the content description for the content associated with the event
+	 * 
+	 * @param eventId
+	 * @return
+	 */
+	@RequestMapping(value = "/events/{eventId}/contents-description", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Object getEventContentsDescription(@PathVariable String eventId) {
 		try {

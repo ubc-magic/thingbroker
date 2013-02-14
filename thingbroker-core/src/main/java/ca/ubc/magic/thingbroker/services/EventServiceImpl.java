@@ -98,8 +98,7 @@ public class EventServiceImpl implements EventService {
 			if (storedEvent.getServerTimestamp().longValue() == event
 					.getServerTimestamp().longValue()) {
 				if (storedEvent.getInfo() instanceof Map) {
-					LinkedHashMap<String, Object> storedInfo = (LinkedHashMap<String, Object>) storedEvent
-							.getInfo();
+					LinkedHashMap<String, Object> storedInfo = (LinkedHashMap<String, Object>) storedEvent.getInfo();
 					storedInfo.putAll(content);
 					return create(storedEvent, null, true);
 				}

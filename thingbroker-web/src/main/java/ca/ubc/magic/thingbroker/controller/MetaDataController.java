@@ -16,7 +16,6 @@ import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
-import ca.ubc.magic.utils.Messages;
 
 /**
  * This controller deals with Thing meta data
@@ -30,10 +29,8 @@ public class MetaDataController {
 	private static final Logger logger = LoggerFactory.getLogger(ThingController.class);
 	
 	private ThingService thingService;
-	private final Messages messages;
 	
-	public MetaDataController(ThingService thingService, Messages messages) {
-		this.messages = messages;
+	public MetaDataController(ThingService thingService) {
 		this.thingService = thingService;
 	}
 	

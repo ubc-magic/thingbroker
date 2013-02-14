@@ -26,24 +26,28 @@ public class ThingDAO {
 		return thing;
 	}
 
+	public Thing getThing(String thingId) {
+		return mongoOperation.findById(thingId, Thing.class, "things");
+	}
+
 	public Thing putMetadata(Thing thing) {
 		mongoOperation.save(thing, "things");
 		return thing;
 	}
 
 	public List<Thing> retrieve(Map<String, String> searchParams) {
-		if (searchParams == null || searchParams.size() == 0) {
-			return null;
-		}
-		Criteria c = null;
-		for (String key : searchParams.keySet()) {
-			if (c == null) {
-				c = new Criteria(key).is(searchParams.get(key));
-			} else {
-				c.andOperator(Criteria.where(key).is(searchParams.get(key)));
+		Query q = new Query();
+		if (searchParams != null && !searchParams.isEmpty()) {
+			Criteria c = null;
+			for (String key : searchParams.keySet()) {
+				if (c == null) {
+					c = new Criteria(key).is(searchParams.get(key));
+				} else {
+					c.andOperator(Criteria.where(key).is(searchParams.get(key)));
+				}
 			}
+			q = new Query(c);
 		}
-		Query q = new Query(c);
 		return mongoOperation.find(q, Thing.class, "things");
 	}
 

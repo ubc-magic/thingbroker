@@ -29,7 +29,7 @@ public class ThingServiceImpl implements ThingService {
 		} else {
 			Map<String, String> searchParam = new HashMap<String, String>();
 			searchParam.put("thingId", thing.getThingId());
-			List<Thing> storedThings = getThing(searchParam);
+			List<Thing> storedThings = getThings(searchParam);
 			if (storedThings != null && storedThings.size() > 0) {
 				throw new ThingBrokerException(Constants.CODE_THING_ALREADY_REGISTERED,messages.getMessage("THING_ALREADY_REGISTERED"));
 			}
@@ -39,20 +39,20 @@ public class ThingServiceImpl implements ThingService {
 		return thing;
 	}
 
-	public List<Thing> getThing(Map<String, String> searchParams)
-			throws ThingBrokerException {
-		List<Thing> t = thingDao.retrieve(searchParams);
-		if (t != null && t.size() > 0) {
-			return t;
-		}
-		return null;
+	public List<Thing> getThings(Map<String, String> queryParams) throws ThingBrokerException {
+		return thingDao.retrieve(queryParams);
+	}
+
+	@Override
+	public Thing getThing(String thingId) {
+		return thingDao.getThing(thingId);
 	}
 
 	public Map<String, Object> getThingMetadata(Thing id)
 			throws ThingBrokerException {
 		Map<String, String> searchParam = new HashMap<String, String>();
 		searchParam.put("thingId", id.getThingId());
-		List<Thing> storedThings = getThing(searchParam);
+		List<Thing> storedThings = getThings(searchParam);
 		if (storedThings != null) {
 			return storedThings.get(0).getMetadata();
 		}
@@ -62,7 +62,7 @@ public class ThingServiceImpl implements ThingService {
 	public synchronized Thing addMetadata(Thing thing) throws ThingBrokerException {
 		Map<String, String> searchParams = new HashMap<String, String>();
 		searchParams.put("thingId", thing.getThingId());
-		List<Thing> thingToUpdate = getThing(searchParams);
+		List<Thing> thingToUpdate = getThings(searchParams);
 		if (thingToUpdate != null && thingToUpdate.size() > 0) {
 			thingToUpdate.get(0).getMetadata().putAll(thing.getMetadata());
 			return thingDao.putMetadata(thingToUpdate.get(0));
@@ -75,7 +75,7 @@ public class ThingServiceImpl implements ThingService {
 			throws ThingBrokerException {
 		Map<String, String> searchParams = new HashMap<String, String>();
 		searchParams.put("thingId", thing.getThingId());
-		Thing t = thingDao.retrieve(searchParams).get(0);
+		Thing t = thingDao.getThing(thing.getThingId());
 		if (t != null) {
 			for (String thingToFollow : thingsToFollow) {
 				if(!thingToFollow.equals(thing.getThingId())) {
@@ -128,7 +128,7 @@ public class ThingServiceImpl implements ThingService {
 	public Thing update(Thing thing) throws ThingBrokerException {
 		Map<String, String> searchParam = new HashMap<String, String>();
 		searchParam.put("thingId", thing.getThingId());
-		Thing storedThing = getThing(searchParam).get(0);
+		Thing storedThing = getThings(searchParam).get(0);
 		if (storedThing != null) {
 			if (thing.getFollowing() != null && thing.getFollowing().size() > 0) {
 				List<String> thingsToFollow = new ArrayList<String>();
@@ -156,7 +156,7 @@ public class ThingServiceImpl implements ThingService {
 							thingsToUnfollow.toArray(things));
 				}
 			}
-			storedThing = getThing(searchParam).get(0);
+			storedThing = getThings(searchParam).get(0);
 			thing.setFollowing(storedThing.getFollowing());
 			thing.setFollowers(storedThing.getFollowers());
 			return thingDao.update(thing);
@@ -168,7 +168,7 @@ public class ThingServiceImpl implements ThingService {
 	public Thing delete(Thing id) throws ThingBrokerException {
 		Map<String, String> searchParam = new HashMap<String, String>();
 		searchParam.put("thingId", id.getThingId());
-		List<Thing> storedThings = getThing(searchParam);
+		List<Thing> storedThings = getThings(searchParam);
 		if (storedThings != null) {
 			thingDao.delete(id);
 			return storedThings.get(0);

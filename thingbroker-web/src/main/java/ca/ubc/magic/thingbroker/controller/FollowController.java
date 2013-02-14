@@ -17,7 +17,6 @@ import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
-import ca.ubc.magic.utils.Messages;
 
 /**
  * This controller deals with following things
@@ -31,16 +30,14 @@ public class FollowController {
 	private static final Logger logger = LoggerFactory.getLogger(ThingController.class);
 	
 	private ThingService thingService;
-	private final Messages messages;
 	
-	public FollowController(ThingService thingService, Messages messages) {
-		this.messages = messages;
+	public FollowController(ThingService thingService) {
 		this.thingService = thingService;
 	}
 	
 	//TODO: get follow?
 
-	@RequestMapping(value = "/{thingId}/follow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "{thingId}/follow",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Object followThings(@PathVariable String thingId, @RequestBody String[] thingsToFollow) {
 		try {

@@ -23,8 +23,6 @@ public class Thing implements Serializable{
 	private Map<String,Object> metadata;
 	private Set<String> followers;
 	private Set<String> following;
-
-	private State state;
 	
 	public Thing() {
 		followers = new HashSet<String>();
@@ -92,12 +90,77 @@ public class Thing implements Serializable{
 		this.following = following;
 	}
 
-	public State getState() {
-		return state;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result
+				+ ((followers == null) ? 0 : followers.hashCode());
+		result = prime * result
+				+ ((following == null) ? 0 : following.hashCode());
+		result = prime * result
+				+ ((metadata == null) ? 0 : metadata.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((thingId == null) ? 0 : thingId.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
 	}
 
-	public void setState(State state) {
-		this.state = state;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Thing other = (Thing) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (followers == null) {
+			if (other.followers != null)
+				return false;
+		} else if (!followers.equals(other.followers))
+			return false;
+		if (following == null) {
+			if (other.following != null)
+				return false;
+		} else if (!following.equals(other.following))
+			return false;
+		if (metadata == null) {
+			if (other.metadata != null)
+				return false;
+		} else if (!metadata.equals(other.metadata))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (thingId == null) {
+			if (other.thingId != null)
+				return false;
+		} else if (!thingId.equals(other.thingId))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Thing [thingId=" + thingId + ", name=" + name
+				+ ", description=" + description + ", type=" + type
+				+ ", metadata=" + metadata + ", followers=" + followers
+				+ ", following=" + following + "]";
 	}
 
 }

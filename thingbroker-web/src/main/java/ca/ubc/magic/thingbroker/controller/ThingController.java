@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,6 +40,12 @@ public class ThingController {
 		this.thingService = thingService;
 	}
 	
+	/**
+	 * Create a new thing.  Note that things can have the same name - they will have different ids.
+	 * 
+	 * @param thing
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.POST, consumes="application/json", produces = "application/json")
 	@ResponseBody 
 	public Object registerThing(@RequestBody Thing thing) {
@@ -57,6 +64,12 @@ public class ThingController {
 		}
 	}
 	
+	/**
+	 * Update the specified thing
+	 * 
+	 * @param thing
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.PUT, consumes="application/json", produces = "application/json")
 	@ResponseBody
 	public Object updateThing(@RequestBody Thing thing) {
@@ -69,13 +82,39 @@ public class ThingController {
 		}
 	}
 	
+	
+	/**
+	 * Get the thing with the specified id.
+	 * 
+	 * @param thingId
+	 * @return
+	 */
+	@RequestMapping(value="{thingId}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Object getThing(@PathVariable String thingId) {
+		try {
+		  return thingService.getThing(thingId);
+		}
+		catch(ThingBrokerException ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(ex.getExceptionCode(),ex.getMessage());
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			logger.debug(ex.getMessage());
+			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
+		}
+	}
+
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public Object retrieveThing(@RequestParam Map<String, String> params) {
+	public Object getThings(@RequestParam Map<String, String> queryParams) {
         try {
-		  List<Thing> t = thingService.getThing(params);
-		  if(t != null) {
-			  return t;
+		  List<Thing> things = thingService.getThings(queryParams);
+
+		  if(things != null) {
+			  return things;
 		  }
 		  return new StatusMessage(Constants.CODE_THING_NOT_FOUND, messages.getMessage("THING_NOT_FOUND"));
         }
@@ -86,9 +125,15 @@ public class ThingController {
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, produces = "application/json")
+	/**
+	 * Delete a thing with the specified id.
+	 * 
+	 * @param thingId
+	 * @return
+	 */
+	@RequestMapping(value="{thingId}", method = RequestMethod.DELETE, produces = "application/json")
 	@ResponseBody
-	public Object removeThing(@RequestParam("thingId") String thingId) {
+	public Object removeThing(@PathVariable String thingId) {
 		try {
 		  Thing t = thingService.delete(new Thing(thingId));
 		  return (t != null) ? t : "{}";

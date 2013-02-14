@@ -6,25 +6,46 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
+	<annotation-driven />
+
     <beans:import resource="classpath:core-context.xml" />
+
+<!--         <beans:bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+            <beans:property name="objectMapper" ref="jacksonObjectMapper" />
+            <beans:property name="supportedMediaTypes">
+                <beans:list>
+                    <beans:bean class="org.springframework.http.MediaType">
+                        <beans:constructor-arg index="0" value="application" />
+                        <beans:constructor-arg index="1" value="json" />
+                        <beans:constructor-arg index="2" value="UTF-8" />
+                    </beans:bean>
+                </beans:list>
+            </beans:property>
+
+        </beans:bean> -->
 
 	<beans:bean id="thingController"
 		class="ca.ubc.magic.thingbroker.controller.ThingController">
 		<beans:constructor-arg ref="thingService" />
 		<beans:constructor-arg ref="messages" />
 	</beans:bean>
-
-<!-- 	<beans:bean id="thingService" class="org.mockito.Mockito"
-		factory-method="mock">
-		<beans:constructor-arg
-			value="ca.ubc.magic.thingbroker.services.ThingServiceImpl" />
+	
+	<beans:bean id="eventController"
+		class="ca.ubc.magic.thingbroker.controller.EventController">
+		<beans:constructor-arg ref="eventService" />
+		<beans:constructor-arg ref="messages" />
 	</beans:bean>
-
-
-	<beans:bean name="messages" class="org.mockito.Mockito"
-		factory-method="mock">
-		<beans:constructor-arg value="ca.ubc.magic.utils.Messages"/>
+	
+	<beans:bean id="followController"
+		class="ca.ubc.magic.thingbroker.controller.FollowController">
+		<beans:constructor-arg ref="thingService" />
+		<beans:constructor-arg ref="messages" />
 	</beans:bean>
- -->
+	
+	<beans:bean id="metaDataController"
+		class="ca.ubc.magic.thingbroker.controller.MetaDataController">
+		<beans:constructor-arg ref="thingService" />
+		<beans:constructor-arg ref="messages" />
+	</beans:bean>
 
 </beans:beans>
