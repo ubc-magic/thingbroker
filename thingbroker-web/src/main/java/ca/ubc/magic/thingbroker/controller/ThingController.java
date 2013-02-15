@@ -135,7 +135,7 @@ public class ThingController {
 	@ResponseBody
 	public Object removeThing(@PathVariable String thingId) {
 		try {
-		  Thing t = thingService.delete(new Thing(thingId));
+		  Thing t = thingService.delete(thingId);
 		  return (t != null) ? t : "{}";
 		}
 		catch(ThingBrokerException ex) {

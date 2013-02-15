@@ -23,7 +23,7 @@ public interface ThingService {
 
 	public Thing update(Thing thing) throws ThingBrokerException;
 
-	public Thing delete(Thing id) throws ThingBrokerException;
+	public Thing delete(String thingId) throws ThingBrokerException;
 
 	public Thing addMetadata(Thing metadata) throws ThingBrokerException;
 

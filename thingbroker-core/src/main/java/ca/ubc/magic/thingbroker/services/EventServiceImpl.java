@@ -1,7 +1,5 @@
 package ca.ubc.magic.thingbroker.services;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -98,6 +96,7 @@ public class EventServiceImpl implements EventService {
 			if (storedEvent.getServerTimestamp().longValue() == event
 					.getServerTimestamp().longValue()) {
 				if (storedEvent.getInfo() instanceof Map) {
+					@SuppressWarnings("unchecked")
 					LinkedHashMap<String, Object> storedInfo = (LinkedHashMap<String, Object>) storedEvent.getInfo();
 					storedInfo.putAll(content);
 					return create(storedEvent, null, true);
@@ -145,60 +144,6 @@ public class EventServiceImpl implements EventService {
 			return events;
 		
 		return realTimeEventService.getEvents(thingId, following, waitTime, followingOnly);
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see ca.ubc.magic.thingbroker.services.interfaces.EventService#retrieveByCriteria(ca.ubc.magic.thingbroker.model.Event, java.util.Map)
-	 */
-	public List<Event> retrieveByCriteria(Event event, Map<String, String> params) throws Exception {
-		String requester = params.get("requester");
-		String timeout = params.get("timeout");
-		if (requester != null) {
-			params.remove("requester");
-			params.remove("timeout");
-			Map<String, String> searchParam = new HashMap<String, String>();
-			searchParam.put("thingId", requester);
-			List<Thing> req = thingDao.retrieve(searchParam);
-			// add thing to following list of requester if it is not there already.
-			if (req != null && req.size() > 0) {
-				if (!req.get(0).getFollowing().contains(event.getThingId())) {
-					req.get(0).getFollowing().add(event.getThingId());
-					searchParam.put("thingId", event.getThingId());
-					List<Thing> tToFollow = thingDao.retrieve(searchParam);
-					if (tToFollow != null) {
-						tToFollow.get(0).getFollowers().add(requester);
-						thingDao.update(req.get(0));
-						thingDao.update(tToFollow.get(0));
-					}
-				}
-				// get previous events from the thing
-				Set<Event> storedEvents = eventDao.retrieveEventsFromThing(event, params); // Using set to avoid duplicates
-				List<Event> response = new ArrayList<Event>();
-				
-				// if there are some, return them immediately, otherwise get real time events.
-				// note to avoid duplicates must query for events after the last one received.
-				if (storedEvents != null && storedEvents.size() > 0) {
-					response.addAll(storedEvents);
-				} else {
-					// requester should follow the thing if it isn't already
-					realTimeEventService.follow(requester, event.getThingId());
-					long waitTime = timeout == null ? Constants.REAL_TIME_EVENTS_WAITING_TIME
-							: Long.valueOf(timeout);
-					List<Event> realTimeEvents = realTimeEventService.getEvents(requester, waitTime);
-					if (realTimeEvents.size() > 0) {
-						response.addAll(realTimeEvents);
-					}
-				}
-				Collections.sort(response);
-				return response;
-			}
-			throw new ThingBrokerException(
-					Constants.CODE_REQUESTER_NOT_REGISTERED,
-					messages.getMessage("REQUESTER_NOT_REGISTERED"));
-		}
-		throw new ThingBrokerException(Constants.CODE_REQUESTER_NOT_INFORMED,
-				messages.getMessage("REQUESTER_NOT_INFORMED"));
 	}
 
 	public EventData retrieveEventData(EventData eventData) throws Exception {

@@ -165,13 +165,12 @@ public class ThingServiceImpl implements ThingService {
 				messages.getMessage("THING_NOT_FOUND"));
 	}
 
-	public Thing delete(Thing id) throws ThingBrokerException {
-		Map<String, String> searchParam = new HashMap<String, String>();
-		searchParam.put("thingId", id.getThingId());
-		List<Thing> storedThings = getThings(searchParam);
-		if (storedThings != null) {
-			thingDao.delete(id);
-			return storedThings.get(0);
+	public Thing delete(String thingId) throws ThingBrokerException {
+		Thing thing = getThing(thingId);
+		
+		if (thing != null) {
+			thingDao.delete(thingId);
+			return thing;
 		}
 		throw new ThingBrokerException(Constants.CODE_THING_NOT_FOUND,
 				messages.getMessage("THING_NOT_FOUND"));

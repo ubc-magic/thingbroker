@@ -3,6 +3,7 @@
  */
 package ca.magic.ubc.thingbroker;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -12,11 +13,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import static junit.framework.Assert.*;
+
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.type.TypeReference;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,13 +60,11 @@ public class TestThingController {
 	private MockMvc mockMvc;
 
 	@Before
-	public void setup() {
+	public void setup() throws Exception {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-	}
-	
-	@Test
-	public void testGetThings() throws Exception {
 		
+		// delete all things
+		teardown();
 		this.mockMvc.perform(post("/things")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"name\":\"test-thing1\"}"))
@@ -83,19 +86,45 @@ public class TestThingController {
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.name").value("test-thing3"));
 		
+	}
 	
+	@After
+	public void teardown() throws UnsupportedEncodingException, Exception {
+		// get all of the things and delete them
+		String output = this.mockMvc.perform(get("/things"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+
+		JsonNode things = mapper.readTree(output);
+		
+		for (Iterator<JsonNode> iter = things.getElements(); iter.hasNext(); ) {
+		    JsonNode node = iter.next();
+		    String id = node.get("thingId").asText();
+			System.out.println("deleting thing:"+id);
+			System.out.println("/things/"+id);
+
+			this.mockMvc.perform(delete("/things/"+id));
+		}
+	}
+	
+	@Test
+	public void testGetThings() throws Exception {
+		
 		String output = this.mockMvc.perform(get("/things"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andReturn().getResponse().getContentAsString();
 		
-		// now delete the things
-		
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode things = mapper.readTree(output);
+		assertEquals(3, things.size());
 	}
 	
 	
 	@Test
-	public void testFollowing() throws Exception {
+	public void testFollowingEvents() throws Exception {
 		String result = this.mockMvc.perform(post("/things")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"name\":\"test-thing-a\"}"))
@@ -103,10 +132,10 @@ public class TestThingController {
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.name").value("test-thing-a")).andReturn().getResponse().getContentAsString();
         ObjectMapper mapper = new ObjectMapper();
-        LinkedHashMap<String, Object> thing = (LinkedHashMap<String, Object>) mapper.readValue(result, Object.class);
+        JsonNode thing = mapper.readTree(result);
         
         // final so we can access it from anonymous class below
-        final String thingAId = (String)thing.get("thingId");
+        final String thingAId = thing.get("thingId").asText();
         System.out.println("the id is: "+thingAId);
 		
         result = this.mockMvc.perform(post("/things")
@@ -115,18 +144,18 @@ public class TestThingController {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.name").value("test-thing-b")).andReturn().getResponse().getContentAsString();
-		thing = (LinkedHashMap<String, Object>) mapper.readValue(result, Object.class);
-        String thingBId = (String)thing.get("thingId");
+        thing = mapper.readTree(result);
+        String thingBId = thing.get("thingId").asText();
         System.out.println("the id is: "+thingBId);
-
+        
         result = this.mockMvc.perform(post("/things")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"name\":\"test-thing-c\"}"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.name").value("test-thing-c")).andReturn().getResponse().getContentAsString();	
-		thing = (LinkedHashMap<String, Object>) mapper.readValue(result, Object.class);
-        String thingCId = (String)thing.get("thingId");
+        thing = mapper.readTree(result);
+        String thingCId = thing.get("thingId").asText();
         System.out.println("the id is: "+thingCId);
 		
         // now follow B and C
@@ -149,6 +178,10 @@ public class TestThingController {
  				.andExpect(status().isOk())
  				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse().getContentAsString();
  		
+        thing = mapper.readTree(result);
+        // A is following B and C
+        assertEquals(2, thing.get("following").size());
+
         // visual check until I figure out how to use the json query language
         System.out.println(result);
         
@@ -322,9 +355,6 @@ public class TestThingController {
 
         t.join();
 	}
-	
-	
-	
 
 	@Test
 	public void registerThing() throws Exception {
@@ -337,15 +367,11 @@ public class TestThingController {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.name").value("test-thing"));
-	}
-	
-	@Test
-	public void getFoo() throws Exception {
 		// actually should return a list of things.
 		this.mockMvc.perform(get("/things?name=test-thing").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.name").value("test-thing"));
+				.andExpect(jsonPath("$[0].name").value("test-thing"));
 	}
 	
 }

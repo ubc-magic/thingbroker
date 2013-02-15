@@ -62,11 +62,11 @@ public class ThingDAO {
 		return thing;
 	}
 
-	public void delete(Thing thing) {
-		Query q = new Query(Criteria.where("thingId").is(thing.getThingId()));
-		mongoOperation.findAndRemove(q, Thing.class,"things");
+	public void delete(String thingId) {
+		// we use the
+		mongoOperation.remove(new Thing(thingId), "things");
 		Event event = new Event();
-		event.setThingId(thing.getThingId());
+		event.setThingId(thingId);
 		//TODO: why does thingDAO depend on eventDAO = move to service above?
 		eventDao.deleteFromThing(event);
 	}

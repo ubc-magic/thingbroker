@@ -44,16 +44,6 @@ public interface EventService {
 	 */
 	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, boolean followingOnly);
 
-	/**
-	 * @param event
-	 * @param params
-	 * @return
-	 * @throws Exception
-	 * @deprecated
-	 */
-	public List<Event> retrieveByCriteria(Event event,
-			Map<String, String> params) throws Exception;
-
 	public EventData retrieveEventData(EventData eventData) throws Exception;
 
 	public EventData retrieveEventDataInfo(EventData eventData)
