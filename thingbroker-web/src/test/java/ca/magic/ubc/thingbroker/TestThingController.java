@@ -196,12 +196,10 @@ public class TestThingController {
 
 						String result = TestThingController.this.mockMvc
 								.perform(
-										get("/things/" + thingAId
-												+ "/events?waitTime=10"))
+										get("/things/" + thingAId + "/events?waitTime=10"))
 								.andExpect(status().isOk())
 								.andExpect(
-										content().contentType(
-												MediaType.APPLICATION_JSON))
+										content().contentType(MediaType.APPLICATION_JSON))
 								.andReturn().getResponse().getContentAsString();
 
 						System.out.println("thread got event!");

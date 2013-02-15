@@ -38,8 +38,7 @@ public class ContentController {
 
 	@RequestMapping(value = "/{contentId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Object getEventData(@PathVariable String contentId, @RequestParam("mustAttach") boolean mustAttach,
-			HttpServletResponse response) {
+	public Object getEventData(@PathVariable String contentId, @RequestParam("mustAttach") boolean mustAttach, HttpServletResponse response) {
 		try {
 			EventData data = eventService.retrieveEventData(new EventData(contentId));
 			if (data != null) {
@@ -92,6 +91,4 @@ public class ContentController {
 			return new StatusMessage(Constants.CODE_INTERNAL_ERROR,ex.getMessage());
 		}
 	}
-	
-
 }
