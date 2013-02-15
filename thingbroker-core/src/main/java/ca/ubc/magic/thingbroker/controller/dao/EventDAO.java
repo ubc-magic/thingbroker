@@ -1,6 +1,7 @@
 package ca.ubc.magic.thingbroker.controller.dao;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,65 @@ public class EventDAO {
 		return new LinkedHashSet<Event>();
 	}
 	
-    public void update(Event event) {
+    public List<Event> getEvents(String thingId, Set<String> thingIds, Map<String, String> queryParams, boolean followingOnly) {
+    	
+    	boolean doQuery = false;
+    	
+    	Set<String> thingSet = new HashSet<String>(thingIds);
+    	if (!followingOnly)
+    		thingSet.add(thingId);
+    	
+    	// first append all of the thing ids
+    	Criteria c = Criteria.where("thingId").in(thingSet);
+ 
+    	// we'll assume the start time is now unless specified
+		long startTime = System.currentTimeMillis();
+
+    	if (queryParams.get("start") != null) {
+    		startTime = Long.parseLong(queryParams.get("start"));
+    		doQuery = true;
+    	}
+    	
+    	// set up criteria first
+		if (queryParams.get("end") != null) {
+			long endTime = Long.parseLong(queryParams.get("end"));
+	    	c.and("serverTimestamp").gt(startTime).lte(endTime);
+    		doQuery = true;
+
+		} else if (queryParams.get("before") != null) {
+			long before = Long.parseLong(queryParams.get("before"));
+	    	c.and("serverTimestamp").gt(startTime-before).lte(startTime);
+    		doQuery = true;
+
+		} else if (queryParams.get("after") != null) {
+			long after = Long.parseLong(queryParams.get("after"));
+			c.and("serverTimestamp").gt(startTime).lte(startTime+after);
+    		doQuery = true;
+
+		}
+   
+		// then modify query with offset and limit
+		Query q = new Query(c);
+		q.sort().on("serverTimestamp", Order.DESCENDING);
+		if (queryParams.get("limit") != null) {
+			int limit = Integer.parseInt(queryParams.get("limit"));
+			q.limit(limit);
+    		doQuery = true;
+
+		}
+		if (queryParams.get("offset") != null) {
+			int offset = Integer.parseInt(queryParams.get("offset"));
+			q.skip(offset);
+    		doQuery = true;
+		}
+		// if we are doing a historical query, get the data, otherwise, return an empty list
+		if (doQuery)
+			return mongoOperation.find(q, Event.class,"events");
+		else
+			return new ArrayList<Event>();
+	}
+
+	public void update(Event event) {
         mongoOperation.save(event,"events");
     }
     

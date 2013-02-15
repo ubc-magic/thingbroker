@@ -1,6 +1,7 @@
 package ca.ubc.magic.thingbroker.services.interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import ca.ubc.magic.thingbroker.model.Event;
 
@@ -24,6 +25,7 @@ public interface RealTimeEventService {
 	 * Follow thing
 	 * @param thingId thing
 	 * @param followedThing the thing to follow
+	 * @deprecated
 	 * @return
 	 */
 	public void follow(String thingId, String followedThing);
@@ -34,6 +36,8 @@ public interface RealTimeEventService {
 	 * @param thingId
 	 * @param followedThing
 	 * @return
+	 * 
+	 * @deprecated
 	 */
 	public void unfollow(String thingId, String followedThing);
 	
@@ -44,6 +48,17 @@ public interface RealTimeEventService {
 	 * @param waitTime
 	 * @return
 	 * @throws Exception
+	 * @deprecated
 	 */
 	public List<Event> getEvents(String thingId, long waitTime) throws Exception;
+
+	/**
+	 * Get events from the thing and its followers
+	 * 
+	 * @param thingId
+	 * @param waitTime
+	 * @param followingOnly
+	 * @return
+	 */
+	public List<Event> getEvents(String thingId, Set<String> following, int waitTime, boolean followingOnly);
 }

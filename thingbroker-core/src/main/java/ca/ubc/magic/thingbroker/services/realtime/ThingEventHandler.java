@@ -3,10 +3,12 @@ package ca.ubc.magic.thingbroker.services.realtime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
@@ -55,11 +57,8 @@ public class ThingEventHandler implements MessageListener {
 		this.session = session;
 	}
 
-	public List<Event> getEvents(long waitTime) throws Exception {
+	public List<Event> getEvents(long waitTime) {
 		this.accessTime = System.currentTimeMillis();
-	
-		if (messageQueue == null)
-			throw new Exception("attempt to get events from an event handler subscription");
 
 		Event newEvent = null;
 		try {
@@ -104,6 +103,10 @@ public class ThingEventHandler implements MessageListener {
 		following.put(followerThing, consumer);
 	}
 	
+	public Set<String> getFollowing() {
+		return following.keySet();
+	}
+	
 	public void removeFollower(String followerThing) {
 		MessageConsumer consumer = following.get(followerThing);
 		if (consumer != null)
@@ -112,6 +115,13 @@ public class ThingEventHandler implements MessageListener {
 			} catch (JMSException e) {
 				logger.error("error while closing consumer");
 			}
+	}
+	
+	public void addFollower(String following) throws JMSException {
+		Destination thingQueue = session.createTopic("thingbroker.things.thing." + following);
+		MessageConsumer consumer = session.createConsumer(thingQueue);
+		addFollower(following, consumer);
+		consumer.setMessageListener(this);		
 	}
 
 	public boolean isFollowing(String followerThing) {

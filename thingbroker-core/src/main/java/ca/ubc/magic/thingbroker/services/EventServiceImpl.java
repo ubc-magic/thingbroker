@@ -122,7 +122,35 @@ public class EventServiceImpl implements EventService {
 		throw new ThingBrokerException(Constants.CODE_EVENT_NOT_FOUND,
 				messages.getMessage("EVENT_NOT_FOUND"));
 	}
+	
+	/**
+	 * Get the events from a thing.
+	 * 
+	 * @param thingId Id of the thing
+	 * @param waitTime time to wait
+	 * @param followingOnly get events only from the things it is following
+	 * @return
+	 */
+	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, boolean followingOnly) {
+		Thing t = thingDao.getThing(thingId);
+		Set<String> following = t.getFollowing();
+		// add self to list of things we're following
+		if (!followingOnly)
+			following.add(thingId);
+		
+		// do a query for events
+		List<Event> events = eventDao.getEvents(thingId, following, queryParams, followingOnly);
+		
+		if (events.size() > 0)
+			return events;
+		
+		return realTimeEventService.getEvents(thingId, following, waitTime, followingOnly);
+	}
 
+	
+	/* (non-Javadoc)
+	 * @see ca.ubc.magic.thingbroker.services.interfaces.EventService#retrieveByCriteria(ca.ubc.magic.thingbroker.model.Event, java.util.Map)
+	 */
 	public List<Event> retrieveByCriteria(Event event, Map<String, String> params) throws Exception {
 		String requester = params.get("requester");
 		String timeout = params.get("timeout");

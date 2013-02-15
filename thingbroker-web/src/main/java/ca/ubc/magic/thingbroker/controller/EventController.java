@@ -49,8 +49,11 @@ public class EventController {
 	@RequestMapping(value = "/things/{thingId}/events", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public Object postEvent(@PathVariable String thingId,
-			@RequestParam("keep-stored") boolean keepStored,
+			@RequestParam(value="keep-stored", required=false) Boolean keepStored,
 			@RequestBody HashMap<String, Object> content) {
+		
+		keepStored = keepStored == null?true:keepStored;
+		
         try {
 		   Event event = new Event();
 		   event.setServerTimestamp(System.currentTimeMillis());
@@ -198,13 +201,18 @@ public class EventController {
 	 * @param params
 	 * @return
 	 */
-	@RequestMapping(value = "/things/{thingId}/events", method = RequestMethod.GET)
+	@RequestMapping(value = "/things/{thingId}/events", method = RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public Object getThingEvents(@PathVariable String thingId, @RequestParam Map<String, String> params) {
 		try {
 			Event event = new Event();
 			event.setThingId(thingId);
-			return eventService.retrieveByCriteria(event, params);
+			int waitTime = params.get("waitTime") == null?10:Integer.parseInt(params.get("waitTime"));
+			boolean followingOnly = params.get("followingOnly") == null?false:Boolean.parseBoolean(params.get("followingOnly"));
+			
+			return eventService.getEvents(thingId, params, waitTime, followingOnly);
+			
+//			return eventService.retrieveByCriteria(event, params);
 		}		
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();

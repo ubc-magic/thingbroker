@@ -9,6 +9,15 @@ import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.EventData;
 
 public interface EventService {
+	
+	/**
+	 * Send/Create an event
+	 * 
+	 * @param event
+	 * @param data
+	 * @param mustSave
+	 * @return
+	 */
 	public Event create(Event event, EventData[] data, boolean mustSave);
 
 	/**
@@ -24,6 +33,24 @@ public interface EventService {
 
 	public Event retrieve(Event event);
 
+	/**
+	 * Get events associated with a thing
+	 * 
+	 * @param thingId the thing
+	 * @param queryParams query parameters: start, end, before, after, limit, offset
+	 * @param waitTime time to wait in seconds for real time events
+	 * @param followingOnly only get events from things the thing is following
+	 * @return
+	 */
+	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, boolean followingOnly);
+
+	/**
+	 * @param event
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 * @deprecated
+	 */
 	public List<Event> retrieveByCriteria(Event event,
 			Map<String, String> params) throws Exception;
 

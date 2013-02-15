@@ -39,13 +39,11 @@
 	<beans:bean id="followController"
 		class="ca.ubc.magic.thingbroker.controller.FollowController">
 		<beans:constructor-arg ref="thingService" />
-		<beans:constructor-arg ref="messages" />
 	</beans:bean>
 	
 	<beans:bean id="metaDataController"
 		class="ca.ubc.magic.thingbroker.controller.MetaDataController">
 		<beans:constructor-arg ref="thingService" />
-		<beans:constructor-arg ref="messages" />
 	</beans:bean>
 
 </beans:beans>

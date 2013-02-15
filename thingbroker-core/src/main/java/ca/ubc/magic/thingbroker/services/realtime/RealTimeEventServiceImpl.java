@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.Connection;
@@ -118,6 +119,61 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 			return new ArrayList<Event>();
 		
 		return thingHandler.getEvents(waitTime);
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService#getEvents(java.lang.String, java.util.Set, int, boolean)
+	 */
+	@Override
+	public List<Event> getEvents(String thingId, Set<String> following, int waitTime, boolean followingOnly) {
+		// if we got here, we know we need real time events
+		// first see if we are alreading getting real time messages for the thing
+		ThingEventHandler thingHandler = things.get(thingId);
+		Session session;
+		try {
+			// create a ThingHandler if we need to, allocates a JMS session and a 
+			// queue for receiving real time events
+			if (thingHandler != null) {
+				// use the same session for a single thing
+				session = thingHandler.getSession();
+			} else {
+				// otherwise make a new session and handler and add it to the map
+				session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+				thingHandler = new ThingEventHandler(session);
+				// add it for next time
+				things.put(thingId, thingHandler);
+			}
+
+			// sync up the followers -- all of the things we are following
+			// creates or removes message consumers for each
+			
+			// 1 - remove any things we're no longer following
+			for(String f: thingHandler.getFollowing()) {
+				if (!following.contains(f))
+					thingHandler.removeFollower(f);
+			}
+			
+			// 2 - add any things we should be following but we are not
+			for (String f: following) {
+				if (!thingHandler.isFollowing(f)) {
+					thingHandler.addFollower(f);
+				}
+			}
+			
+			// finally, should we follow ourselves?
+			if (followingOnly && thingHandler.isFollowing(thingId)) {
+				thingHandler.removeFollower(thingId);
+			} else if (!followingOnly && (!thingHandler.isFollowing(thingId))) {
+				thingHandler.addFollower(thingId);
+			}
+			return thingHandler.getEvents(waitTime);
+
+		} catch (JMSException e) {
+			logger.error(e.getMessage());
+			throw new ThingBrokerException(
+					"JMS Exception occurred when subscribing", e);
+		}		
+		
 	}
 
 	/* (non-Javadoc)
