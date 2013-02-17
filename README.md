@@ -3,8 +3,7 @@
 
 ## VERSION
 
-Build version: 1.0
-STS: 3.1.0
+Build version: 0.5.0.SNAPSHOT
 
 ## INTRODUCTION
 
@@ -26,4 +25,19 @@ You will either need Tomcat 6+ or a Springsource server to run Thing Broker. For
 
 See the [ThingBroker Wiki](https://github.com/ubc-magic/thingbroker/wiki) ThingBroker Wiki for information on how to use the ThingBroker in your applications.
 
+## Summary of Changes
+
+Feb. 16, 2013
+- URLs are more consistent - see
+https://github.com/ubc-magic/thingbroker/wiki/Thing-Broker-API-2.
+- following and unfollowing now works for getting both historical and
+real time events.  When you get events from a thing, you get events
+send to the thing, and the things it is following or, you can specify
+followingOnly=true to get the events from only the things you are
+following.  This is to support the use cases I described.
+- events now contain "info" and/or "content" rather than "data"
+- null fields are no longer sent with JSON
+- behavior of some of  event time query fields are consistent with the MAGIC broker (before, after, start, end)
+- 'offset' added to event queries.
+- integration tests to drive the controllers with fake HTTP requests.
 
