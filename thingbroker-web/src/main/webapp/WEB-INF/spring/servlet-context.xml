@@ -40,7 +40,12 @@
 		class="ca.ubc.magic.thingbroker.controller.FollowController">
 		<beans:constructor-arg ref="thingService" />
 	</beans:bean>
-	
+
+	<beans:bean id="contentController"
+		class="ca.ubc.magic.thingbroker.controller.ContentController">
+		<beans:constructor-arg ref="eventService" />
+	</beans:bean>
+		
 	<beans:bean id="homeController"
 		class="ca.ubc.magic.thingbroker.HomeController">
 	</beans:bean>

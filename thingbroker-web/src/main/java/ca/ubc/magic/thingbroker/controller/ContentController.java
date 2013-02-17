@@ -36,9 +36,10 @@ public class ContentController {
 		this.eventService = eventService;
 	}
 
-	@RequestMapping(value = "/{contentId}", method = RequestMethod.GET)
+	@RequestMapping(value = "{contentId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Object getEventData(@PathVariable String contentId, @RequestParam("mustAttach") boolean mustAttach, HttpServletResponse response) {
+	public Object getEventData(@PathVariable String contentId, @RequestParam(value="mustAttach", required=false) Boolean mustAttach, HttpServletResponse response) {
+		mustAttach = mustAttach==null?false:true;
 		try {
 			EventData data = eventService.retrieveEventData(new EventData(contentId));
 			if (data != null) {
@@ -74,7 +75,7 @@ public class ContentController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/{contentId}/content-info", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/{contentId}/info", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Object getEventContentInfo(@PathVariable String contentId) {
 		try {

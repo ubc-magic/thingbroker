@@ -7,7 +7,7 @@
 <body>
 	<h1>Welcome to Thing Broker</h1><br/><br/>
 	<h1>Event Posting</h1>
-	<form action="/thingbroker/events/event/thing/123?keep-stored=true"
+	<form action="/thingbroker/things/123/events?keep-stored=true"
 		method="post" enctype="multipart/form-data">
 		<input type="file" name="file" /><br /><br /> 
 		<input type="file" name="file2" /><br /><br />
