@@ -27,6 +27,10 @@ Clone the project, then:
     cd thingbroker
     mvn package
     
+To skip tests:
+
+    mvn package -DskipTests=true
+    
 Assuming a JDK and Maven is installed correctly, you should end up with the following files in
 the /thingbroker-web/target directory:
 
