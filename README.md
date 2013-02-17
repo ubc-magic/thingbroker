@@ -20,15 +20,25 @@ You will need two projects: "thing-broker-core" contains the core data model and
 of the Thing Broker.
 The "thingbroker-web" project implements the REST API. The latter depends on the former,
 so you need to use maven to build both projects.
-Make sure to compile "thing-broker-core" first, otherwise "thingbroker-web" will not compile.
+
+To compile the projects:
+
+    cd thingbroker
+    mvn clean install
+    
+Assuming a JDK and Maven is installed correctly, you should end up with the following files in your ~/.m2
+
+    thingbroker-web-{version}.war
 
 ## RUN YOUR OWN INSTANCE
 
-You will either need Tomcat 6 or later and MongoDB to run the Thing Broker.
+You will need a Java web application container such as Jetty or Tomcat and MongoDB to run the Thing Broker.
 
 1. Install and run MongoDB.  See http://www.mongodb.org/
-1. Place the thingbroker file on your "webapps" directory of your Tomcat installation,
-and restart your Tomcat server.
+2. Install Tomcat or Jetty
+3. Rename thingbroker-web-{version}.war to thingbroker.war
+1. Place the thingbroker.war file into your "webapps" directory of your Tomcat installation (or appropriate location
+for Jetty) and restart your Tomcat server.
 
 ## USAGE
 
