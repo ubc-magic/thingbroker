@@ -2,20 +2,23 @@ package ca.ubc.magic.thingbroker.model;
 
 import java.util.UUID;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.springframework.data.annotation.Id;
 
-public class EventData {
+@JsonSerialize(include = Inclusion.NON_NULL)
+public class Content {
 	@Id
 	private String contentId;
     private byte [] data;
     private String name;
     private String mimeType;
     
-    public EventData() {
+    public Content() {
     	contentId = UUID.randomUUID().toString();
     }
     
-    public EventData(String contentId) {
+    public Content(String contentId) {
     	this.contentId = contentId;
     }
 

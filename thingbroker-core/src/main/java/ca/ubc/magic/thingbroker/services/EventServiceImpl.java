@@ -25,7 +25,7 @@ import ca.ubc.magic.thingbroker.controller.dao.EventDataDAO;
 import ca.ubc.magic.thingbroker.controller.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
-import ca.ubc.magic.thingbroker.model.EventData;
+import ca.ubc.magic.thingbroker.model.Content;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
 		this.messages = messages;
 	}
 
-	public Event create(Event event, EventData[] data, boolean mustSave) {
+	public Event create(Event event, Content[] data, boolean mustSave) {
 		try {
 			if (mustSave) {
 				event = eventDao.create(event, data); // Get the event object
@@ -71,7 +71,7 @@ public class EventServiceImpl implements EventService {
 		}
 	}
 
-	public synchronized Event update(Event event, EventData[] data)
+	public synchronized Event update(Event event, Content[] data)
 			throws ThingBrokerException {
 		Event storedEvent = eventDao.retrieveById(event);
 		if (storedEvent != null) {
@@ -146,8 +146,8 @@ public class EventServiceImpl implements EventService {
 		return realTimeEventService.getEvents(thingId, following, waitTime, followingOnly);
 	}
 
-	public EventData retrieveEventData(EventData eventData) throws Exception {
-		EventData data = eventDataDao.retrieve(eventData);
+	public Content retrieveEventData(Content eventData) throws Exception {
+		Content data = eventDataDao.retrieve(eventData);
 		if (data != null) {
 			return data;
 		}
@@ -155,9 +155,9 @@ public class EventServiceImpl implements EventService {
 				messages.getMessage("EVENT_DATA_NOT_FOUND"));
 	}
 
-	public EventData retrieveEventDataInfo(EventData eventData)
+	public Content retrieveEventDataInfo(Content eventData)
 			throws Exception {
-		EventData data = eventDataDao.retrieve(eventData);
+		Content data = eventDataDao.retrieve(eventData);
 		if (data != null) {
 			data.setData(null);
 			return data;

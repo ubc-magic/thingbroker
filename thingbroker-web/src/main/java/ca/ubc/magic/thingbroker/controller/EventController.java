@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import ca.ubc.magic.thingbroker.controller.config.Constants;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
-import ca.ubc.magic.thingbroker.model.EventData;
+import ca.ubc.magic.thingbroker.model.Content;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 import ca.ubc.magic.utils.Messages;
@@ -265,10 +265,10 @@ public class EventController {
 	public Object getEventContentsDescription(@PathVariable String eventId) {
 		try {
 			Event event = eventService.retrieve(new Event(eventId));
-			List<EventData> contents = new ArrayList<EventData>();
-			if(event.getData() != null && event.getData().size() > 0) { 
-			  for(String dataId : event.getData()) {
-				 contents.add(eventService.retrieveEventDataInfo(new EventData(dataId)));
+			List<Content> contents = new ArrayList<Content>();
+			if(event.getContent() != null && event.getContent().size() > 0) { 
+			  for(String dataId : event.getContent()) {
+				 contents.add(eventService.retrieveEventDataInfo(new Content(dataId)));
 			  }
 			}
 			return contents;
@@ -285,11 +285,11 @@ public class EventController {
 		}
 	}
 	
-	private EventData [] getEventDataArray(MultipartHttpServletRequest request) {
-		List<EventData> dataList = new ArrayList<EventData>();
+	private Content [] getEventDataArray(MultipartHttpServletRequest request) {
+		List<Content> dataList = new ArrayList<Content>();
 		final Map<String, MultipartFile> content = request.getFileMap();
 		for (MultipartFile file : content.values()) {
-			EventData data = new EventData();
+			Content data = new Content();
 			try {
 				data.setData(file.getBytes());
 				data.setName(file.getOriginalFilename());
@@ -299,7 +299,7 @@ public class EventController {
 			data.setMimeType(file.getContentType());
 			dataList.add(data);
 		}
-		EventData[] dataArray = new EventData[dataList.size()];
+		Content[] dataArray = new Content[dataList.size()];
 		return dataList.toArray(dataArray);
 	}
 }

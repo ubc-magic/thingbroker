@@ -6,7 +6,7 @@ import java.util.Map;
 
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
-import ca.ubc.magic.thingbroker.model.EventData;
+import ca.ubc.magic.thingbroker.model.Content;
 
 public interface EventService {
 	
@@ -18,7 +18,7 @@ public interface EventService {
 	 * @param mustSave
 	 * @return
 	 */
-	public Event create(Event event, EventData[] data, boolean mustSave);
+	public Event create(Event event, Content[] data, boolean mustSave);
 
 	/**
 	 * Update event data
@@ -28,7 +28,7 @@ public interface EventService {
 	 * @return
 	 * @throws ThingBrokerException
 	 */
-	public Event update(Event event, EventData[] data)
+	public Event update(Event event, Content[] data)
 			throws ThingBrokerException;
 
 	public Event retrieve(Event event);
@@ -44,9 +44,9 @@ public interface EventService {
 	 */
 	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, boolean followingOnly);
 
-	public EventData retrieveEventData(EventData eventData) throws Exception;
+	public Content retrieveEventData(Content eventData) throws Exception;
 
-	public EventData retrieveEventDataInfo(EventData eventData)
+	public Content retrieveEventDataInfo(Content eventData)
 			throws Exception;
 
 	/**

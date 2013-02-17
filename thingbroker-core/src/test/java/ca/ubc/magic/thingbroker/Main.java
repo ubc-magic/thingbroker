@@ -120,7 +120,7 @@ public class Main {
 		List<String> data = new ArrayList<String>();
 		data.add("2498793587");
 		data.add("87468-879");
-		event.setData(data);
+		event.setContent(data);
 		eventDao.create(event,null);
 	}
 }

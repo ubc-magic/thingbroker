@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.ubc.magic.thingbroker.controller.config.Constants;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
-import ca.ubc.magic.thingbroker.model.EventData;
+import ca.ubc.magic.thingbroker.model.Content;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 
@@ -41,7 +41,7 @@ public class ContentController {
 	public Object getEventData(@PathVariable String contentId, @RequestParam(value="mustAttach", required=false) Boolean mustAttach, HttpServletResponse response) {
 		mustAttach = mustAttach==null?false:true;
 		try {
-			EventData data = eventService.retrieveEventData(new EventData(contentId));
+			Content data = eventService.retrieveEventData(new Content(contentId));
 			if (data != null) {
 				response.setContentType(data.getMimeType());
 				response.setContentLength(data.getData().length);
@@ -79,7 +79,7 @@ public class ContentController {
 	@ResponseBody
 	public Object getEventContentInfo(@PathVariable String contentId) {
 		try {
-			return eventService.retrieveEventDataInfo(new EventData(contentId));
+			return eventService.retrieveEventDataInfo(new Content(contentId));
 		}		
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();

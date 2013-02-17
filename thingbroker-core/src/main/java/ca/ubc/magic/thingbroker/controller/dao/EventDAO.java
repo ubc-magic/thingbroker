@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 
 import ca.ubc.magic.thingbroker.model.Event;
-import ca.ubc.magic.thingbroker.model.EventData;
+import ca.ubc.magic.thingbroker.model.Content;
 
 public class EventDAO {
 		
@@ -25,14 +25,14 @@ public class EventDAO {
 		this.eventDataDao = eventDataDao;
 	}
 	
-	public Event create(Event event, EventData[] data) {
+	public Event create(Event event, Content[] data) {
 		if(data != null) {
 		  List<String> eventData = new ArrayList<String>();
-		  for(EventData eData : data) {
+		  for(Content eData : data) {
 		      eventData.add(eData.getContentId());
 		      eventDataDao.create(eData);
 		  }
-		  event.setData(eventData);
+		  event.setContent(eventData);
 		}
 		mongoOperation.save(event,"events");
 		return event;

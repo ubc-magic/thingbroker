@@ -1,12 +1,13 @@
 package ca.ubc.magic.thingbroker.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.springframework.data.annotation.Id;
 
+@JsonSerialize(include = Inclusion.NON_NULL)
 public class Event implements Serializable, Comparable<Event>{
 	
 	private static final long serialVersionUID = 1L;
@@ -16,11 +17,9 @@ public class Event implements Serializable, Comparable<Event>{
 	private String thingId;
 	private Long serverTimestamp;
 	private Object info;
-	private List<String> data;
+	private List<String> content;
     
     public Event() {
-    	eventId = UUID.randomUUID().toString();
-    	data = new ArrayList<String>();
     }
     
     public Event(String eventId) {
@@ -46,11 +45,11 @@ public class Event implements Serializable, Comparable<Event>{
 	public void setInfo(Object info) {
 		this.info = info;
 	}
-	public List<String> getData() {
-		return data;
+	public List<String> getContent() {
+		return content;
 	}
-	public void setData(List<String> data) {
-		this.data = data;
+	public void setContent(List<String> data) {
+		this.content = data;
 	}
 
 	public String getThingId() {
@@ -64,7 +63,7 @@ public class Event implements Serializable, Comparable<Event>{
 	@Override
 	public String toString() {
 		return "Event [eventId=" + eventId + ", thingId=" + thingId
-				+ ", serverTimestamp=" + serverTimestamp + ", data=" + data
+				+ ", serverTimestamp=" + serverTimestamp + ", content=" + content
 				+ "]";
 	}
 
@@ -72,7 +71,7 @@ public class Event implements Serializable, Comparable<Event>{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
 		result = prime * result + ((eventId == null) ? 0 : eventId.hashCode());
 		result = prime * result + ((info == null) ? 0 : info.hashCode());
 		result = prime * result
