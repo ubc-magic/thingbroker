@@ -16,14 +16,18 @@ The Thing Broker enables easy application development by providing an easy to us
 Thing Broker was written in Java.  We use the Spring Tools Suite version of Eclipse
 as our IDE and maven to build it on the command line.
 
-You will need two projects: "thing-broker-core" contains the core functionality of the Thing Broker, while "thing-broker-web" implements the REST API. The latter depends on the former, so you need to use maven to build both projects. Make sure to compile "thing-broker-core" first, otherwise "thing-broker-web" will not compile.
+You will need two projects: "thing-broker-core" contains the core data model and services
+of the Thing Broker.
+The "thingbroker-web" project implements the REST API. The latter depends on the former,
+so you need to use maven to build both projects.
+Make sure to compile "thing-broker-core" first, otherwise "thingbroker-web" will not compile.
 
 ## RUN YOUR OWN INSTANCE
 
 You will either need Tomcat 6 or later and MongoDB to run the Thing Broker.
 
-1. Install and run mongodb.
-1. Place this file on your "webapps" directory of your Tomcat installation,
+1. Install and run MongoDB.  See http://www.mongodb.org/
+1. Place the thingbroker file on your "webapps" directory of your Tomcat installation,
 and restart your Tomcat server.
 
 ## USAGE
