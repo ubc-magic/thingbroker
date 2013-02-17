@@ -2,10 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<parent>
+		<groupId>ca.ubc.magic.thingbroker</groupId>
+		<artifactId>thingbroker-parent</artifactId>
+		<version>0.0.5.SNAPSHOT</version>
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ca.ubc.magic.thingbroker</groupId>
 	<artifactId>thingbroker-core</artifactId>
-	<version>0.0.5.SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Thing Broker Core</name>
 	<url>http://www.magic.ubc.ca</url>
