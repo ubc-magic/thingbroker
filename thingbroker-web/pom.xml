@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.ubc.magic.thingbroker</groupId>
 	<artifactId>thingbroker</artifactId>
-	<version>0.5.0</version>
+	<version>0.0.5.SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>Thing Broker Web</name>
 	<url>http://www.magic.ubc.ca</url>
