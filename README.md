@@ -33,11 +33,26 @@ the /thingbroker-web/target directory:
 
 ## RUN YOUR OWN INSTANCE
 
-You will need a Java web application container such as Jetty or Tomcat and MongoDB to run the Thing Broker.
+Before you can run the thing broker, install MongoDB.  See http://www.mongodb.org/
+
+To test it out quickly, and assuming you've compiled it with maven:
+
+    mvn tomcat:run
+    
+This will install tomcat and run the thing broker on port 8080.  To test hit
+
+    http://localhost:8080/thingbroker
+
+To get the empty list of things:
+
+    http://localhost:8080/thingbroker/things
+
+To deploy a server, you will need a Java web application container such as Jetty or Tomcat
+and MongoDB.
 
 1. Install and run MongoDB.  See http://www.mongodb.org/
 2. Install Tomcat or Jetty
-3. Rename thingbroker-web-{version}.war to thingbroker.war
+3. Rename thingbroker-web-{version}.war that you compiled to thingbroker.war
 1. Place the thingbroker.war file into your "webapps" directory of your Tomcat installation (or appropriate location
 for Jetty) and restart your Tomcat server.
 
