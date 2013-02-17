@@ -53,8 +53,8 @@ and MongoDB.
 1. Install and run MongoDB.  See http://www.mongodb.org/
 2. Install Tomcat or Jetty
 3. Rename thingbroker-web-{version}.war that you compiled to thingbroker.war
-1. Place the thingbroker.war file into your "webapps" directory of your Tomcat installation (or appropriate location
-for Jetty) and restart your Tomcat server.
+4. Place the thingbroker.war file into your "webapps" directory of your Tomcat installation (or appropriate location
+for Jetty).  Start your server if it hasn't been started already.
 
 ## USAGE
 
