@@ -66,10 +66,7 @@ Feb. 16, 2013
 - URLs are more consistent - see
 https://github.com/ubc-magic/thingbroker/wiki/Thing-Broker-API-2.
 - following and unfollowing now works for getting both historical and
-real time events.  When you get events from a thing, you get events
-send to the thing, and the things it is following or, you can specify
-followingOnly=true to get the events from only the things you are
-following.  This is to support the use cases I described.
+real time events.
 - events now contain "info" and/or "content" rather than "data"
 - null fields are no longer sent with JSON
 - behavior of some of  event time query fields are consistent with the MAGIC broker (before, after, start, end)
