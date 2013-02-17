@@ -21,7 +21,8 @@ of the Thing Broker.
 The "thingbroker-web" project implements the REST API. The latter depends on the former,
 so you need to use maven to build both projects.
 
-To compile the projects:
+To compile the projects, first make sure mongodb is installed and running so that integration tests will pass.
+Clone the project, then:
 
     cd thingbroker
     mvn package
@@ -37,6 +38,7 @@ Before you can run the thing broker, install MongoDB.  See http://www.mongodb.or
 
 To test it out quickly, and assuming you've compiled it with maven:
 
+    cd thingbroker-web
     mvn tomcat:run
     
 This will install tomcat and run the thing broker on port 8080.  To test hit
