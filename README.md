@@ -24,9 +24,10 @@ so you need to use maven to build both projects.
 To compile the projects:
 
     cd thingbroker
-    mvn clean install
+    mvn package
     
-Assuming a JDK and Maven is installed correctly, you should end up with the following files in your ~/.m2
+Assuming a JDK and Maven is installed correctly, you should end up with the following files in
+the /thingbroker-web/target directory:
 
     thingbroker-web-{version}.war
 
