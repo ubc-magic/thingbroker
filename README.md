@@ -13,13 +13,18 @@ The Thing Broker enables easy application development by providing an easy to us
 
 ## COMPILE FROM SOURCE
 
-Thing Broker was written in java, using Springsource (STS 3.1.0). Download and install the development kit from Springsource. 
+Thing Broker was written in Java.  We use the Spring Tools Suite version of Eclipse
+as our IDE and maven to build it on the command line.
 
 You will need two projects: "thing-broker-core" contains the core functionality of the Thing Broker, while "thing-broker-web" implements the REST API. The latter depends on the former, so you need to use maven to build both projects. Make sure to compile "thing-broker-core" first, otherwise "thing-broker-web" will not compile.
 
 ## RUN YOUR OWN INSTANCE
 
-You will either need Tomcat 6+ or a Springsource server to run Thing Broker. For Tomcat: whether you compiled from source or you downloaded the latest "war" file. Place this file on your "webapps" directory of your Tomcat 6+ installation directory, and restart your Tomcat server.
+You will either need Tomcat 6 or later and MongoDB to run the Thing Broker.
+
+1. Install and run mongodb.
+1. Place this file on your "webapps" directory of your Tomcat installation,
+and restart your Tomcat server.
 
 ## USAGE
 
