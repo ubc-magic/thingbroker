@@ -3,8 +3,7 @@
 
 ## VERSION
 
-Build version: 1.0
-STS: 3.1.0
+Build version: 0.5.0.SNAPSHOT
 
 ## INTRODUCTION
 
@@ -14,16 +13,69 @@ The Thing Broker enables easy application development by providing an easy to us
 
 ## COMPILE FROM SOURCE
 
-Thing Broker was written in java, using Springsource (STS 3.1.0). Download and install the development kit from Springsource. 
+Thing Broker was written in Java.  We use the Spring Tools Suite version of Eclipse
+as our IDE and maven to build it on the command line.
 
-You will need two projects: "thing-broker-core" contains the core functionality of the Thing Broker, while "thing-broker-web" implements the REST API. The latter depends on the former, so you need to use maven to build both projects. Make sure to compile "thing-broker-core" first, otherwise "thing-broker-web" will not compile.
+You will need two projects: "thing-broker-core" contains the core data model and services
+of the Thing Broker.
+The "thingbroker-web" project implements the REST API. The latter depends on the former,
+so you need to use maven to build both projects.
+
+To compile the projects, first make sure mongodb is installed and running so that integration tests will pass.
+Clone the project, then:
+
+    cd thingbroker
+    mvn package
+    
+To skip tests:
+
+    mvn package -DskipTests=true
+    
+Assuming a JDK and Maven is installed correctly, you should end up with the following files in
+the /thingbroker-web/target directory:
+
+    thingbroker-web-{version}.war
 
 ## RUN YOUR OWN INSTANCE
 
-You will either need Tomcat 6+ or a Springsource server to run Thing Broker. For Tomcat: whether you compiled from source or you downloaded the latest "war" file. Place this file on your "webapps" directory of your Tomcat 6+ installation directory, and restart your Tomcat server.
+Before you can run the thing broker, install MongoDB.  See http://www.mongodb.org/
+
+To test it out quickly, and assuming you've compiled it with maven:
+
+    cd thingbroker-web
+    mvn tomcat:run
+    
+This will install tomcat and run the thing broker on port 8080.  To test hit
+
+    http://localhost:8080/thingbroker
+
+To get the empty list of things:
+
+    http://localhost:8080/thingbroker/things
+
+To deploy a server, you will need a Java web application container such as Jetty or Tomcat
+and MongoDB.
+
+1. Install and run MongoDB.  See http://www.mongodb.org/
+2. Install Tomcat or Jetty
+3. Rename thingbroker-web-{version}.war that you compiled to thingbroker.war
+4. Place the thingbroker.war file into your "webapps" directory of your Tomcat installation (or appropriate location
+for Jetty).  Start your server if it hasn't been started already.
 
 ## USAGE
 
 See the [ThingBroker Wiki](https://github.com/ubc-magic/thingbroker/wiki) ThingBroker Wiki for information on how to use the ThingBroker in your applications.
 
+## Summary of Changes
+
+Feb. 16, 2013
+- URLs are more consistent - see
+https://github.com/ubc-magic/thingbroker/wiki/Thing-Broker-API-2.
+- following and unfollowing now works for getting both historical and
+real time events.
+- events now contain "info" and/or "content" rather than "data"
+- null fields are no longer sent with JSON
+- behavior of some of  event time query fields are consistent with the MAGIC broker (before, after, start, end)
+- 'offset' added to event queries.
+- integration tests to drive the controllers with fake HTTP requests.
 
