@@ -67,7 +67,7 @@
 		<dependency>
 			<groupId>ca.ubc.magic.thingbroker</groupId>
 			<artifactId>thingbroker-core</artifactId>
-			<version>0.0.1.CI-SNAPSHOT</version>
+			<version>0.0.5.SNAPSHOT</version>
 		</dependency>	
 		
 		<!-- Apache Commons Upload --> 
