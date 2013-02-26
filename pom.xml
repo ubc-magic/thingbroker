@@ -1,0 +1,12 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ca.ubc.magic.thingbroker</groupId>
+  <artifactId>thingbroker-parent</artifactId>
+  <version>0.0.5.SNAPSHOT</version>
+   <packaging>pom</packaging>
+   
+       <modules>
+        <module>thingbroker-web</module>
+        <module>thingbroker-core</module>
+    </modules>
+</project>
