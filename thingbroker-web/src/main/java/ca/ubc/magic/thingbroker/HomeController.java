@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Handles requests for the application home page.
@@ -22,5 +23,15 @@ public class HomeController {
 		//System.out.println(Utils.getMessage("THING_NOT_FOUND"));
 		return "home";
 	}
+	
+	/**
+	 * handle options by doing nothing
+	 */
+	@RequestMapping(method = RequestMethod.OPTIONS)
+	@ResponseBody 
+	public Object returnOptions() {
+		return null;
+	}
+	
 	
 }

@@ -7,6 +7,7 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+
   <servlet>
     <servlet-name>appServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -18,14 +19,17 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>appServlet</servlet-name>
-    <url-pattern>/</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
+
   <filter>
-    <filter-name>CORS</filter-name>
+    <filter-name>cors</filter-name>
     <filter-class>ca.ubc.magic.thingbroker.config.CorsFilter</filter-class>
   </filter>
+  
   <filter-mapping>
-    <filter-name>CORS</filter-name>
+    <filter-name>cors</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  
 </web-app>
