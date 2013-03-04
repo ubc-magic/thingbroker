@@ -43,7 +43,6 @@ public class ThingServiceImpl implements ThingService {
 		return thingDao.retrieve(queryParams);
 	}
 
-	@Override
 	public Thing getThing(String thingId) {
 		return thingDao.getThing(thingId);
 	}
