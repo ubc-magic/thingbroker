@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">  
+<html lang="en">  
+<head>  
+<title>Shout</title>  
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="jquery.thingbroker.min.js"></script>
+<script type="text/javascript" src="processing-1.4.1.min.js"></script>
+
+
+<style type="text/css">
+  p {color:gray;font-size:16px; font-style:bold; width:100px; height:100px; background-color:#E9E74A; float:left; margin-left:5px; margin-top:5px;padding:4px}
+</style>
+
+<script type="text/javascript">
+function drawSomeText(id) {
+        var pjs = Processing.getInstanceById(id);
+        var text = document.getElementById('inputtext').value;
+        pjs.drawText(text);
+}
+
+function submitTask(id) {
+  var taskText = document.getElementById('inputtext').value;
+  var event = {task:taskText};
+  var t = $.ThingBroker();
+  t.postThing("#tasks"); 
+  var e = t.postEvent("#tasks", event);
+}
+
+function visualizeTasks(id) {
+  var pjs = Processing.getInstanceById(id);
+  var e = $.ThingBroker().getEvents("#tasks");
+  pjs.drawTasks(e);
+}
+
+function appendChat() {
+  var t = document.getElementById('inputtext').value;
+  var event = {append:"<p>"+t+"</p>"};
+  $.ThingBroker().postEvent("#chat", event);
+}
+
+</script>
+
+</head>
+<body>
+
+<canvas id="demoprocessing" data-processing-sources="demoprocessing.pde"></canvas>
+
+<br>
+<input type="textfield" value="my text" id="inputtext">
+<button type="button" onclick="appendChat()">append to chat</button>
+<button type="button" onclick="submitTask()">submitTask</button>
+
+<hr>
+<input type="text" id="txtbox"  />
+<div id="chat"><p>Chat Div.</p></div>
+<div id="tasks"></div>
+
+<script type="text/javascript">
+
+document.cookie="display_id=1";
+
+$("#chat").thing({listen:true});
+$("#txtbox").keypress(function(e){
+    if (e.which == 13) {
+        $(this).thing({prepend:'<p>'+$(this).val()+'</p>', to: '#chat'});    
+        $(this).val("");	
+    }
+});
+
+$("#tasks").thing({listen:true,
+                   debug:true,
+                   eventCallback:function(json){
+                                                visualizeTasks('demoprocessing');
+                                               }
+                  });
+
+</script>
+
+</body>
+</html>
