@@ -1,6 +1,0 @@
-Updating an app:
-
-+ change "jquery.broker.js" to "jquery.thingbroker.js"
-+ the method "broker()" is now "thing()"
-+ all DOM objects should be identified through "id" rather than "class"
-

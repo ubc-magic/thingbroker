@@ -1,3 +1,0 @@
-+ When broker is down need to throw an exception, currently it goes on super-quick loop because current proxy doens't difference when response is nil from response is error 409. :(
-
-+ Update documentation
