@@ -3,7 +3,6 @@
  */
 package ca.ubc.magic.thingbroker.services.realtime;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,9 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
 import org.apache.commons.logging.Log;
@@ -59,68 +56,7 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 		// consider moving event sending to JMS broker here, so its all in one place?
 
 	}
-
-	/* (non-Javadoc)
-	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeThingEventService#follow(java.lang.String, java.lang.String)
-	 */
-	public void follow(String thingId, String followedThing) {
-		
-		// first see if we are alreading getting real time messages for the thing
-		ThingEventHandler thingHandler = things.get(thingId);
-		Session session;
-		try {
-			if (thingHandler != null) {
-				// already following - nothing to do
-				if (thingHandler.isFollowing(followedThing))
-					return;
-				
-				// use the same session for a single thing
-				session = thingHandler.getSession();
-			} else {
-				// otherwise make a new session and handler and add it to the map
-				session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-				thingHandler = new ThingEventHandler(session);
-				// add it for next time
-				things.put(thingId, thingHandler);
-			}
-			// now build a new destination and a consumer for the thing's JMS session, add it to the
-			// event handler and start listening.
-			Destination thingQueue = session.createTopic("thingbroker.things.thing." + followedThing);
-			MessageConsumer consumer = session.createConsumer(thingQueue);
-			thingHandler.addFollower(followedThing, consumer);
-			consumer.setMessageListener(thingHandler);
-
-		} catch (JMSException e) {
-			logger.error(e.getMessage());
-			throw new ThingBrokerException(
-					"JMS Exception occurred when subscribing", e);
-		}
-
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeThingEventService#unfollow(java.lang.String, java.lang.String)
-	 */
-	public void unfollow(String thingId, String followedThing) {
-		// TODO Auto-generated method stub
-		ThingEventHandler thingHandler = things.get(thingId);
-		if (thingHandler == null)
-			return;
-		thingHandler.removeFollower(followedThing);
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeThingEventService#getEvents(java.lang.String, long)
-	 */
-	public List<Event> getEvents(String thingId, long waitTime) throws Exception {
-		
-		ThingEventHandler thingHandler = things.get(thingId);
-		if (thingHandler == null)
-			return new ArrayList<Event>();
-		
-		return thingHandler.getEvents(waitTime);
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService#getEvents(java.lang.String, java.util.Set, int, boolean)
 	 */
