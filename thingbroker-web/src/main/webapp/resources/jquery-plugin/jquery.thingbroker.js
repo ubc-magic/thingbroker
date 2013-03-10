@@ -27,8 +27,8 @@ $.ThingBroker().getThing("thingId")
  */
 
 /*Nerve-wreking global variable*/
-//'http://kimberly.magic.ubc.ca:8080/thingbroker',
-var thingBrokerUrl = 'http://localhost:8080/thingbroker';
+//http://localhost:8080/thingbroker
+var thingBrokerUrl = 'http://kimberly.magic.ubc.ca:8080/thingbroker';
 
 (function($) {
   
@@ -117,7 +117,7 @@ var thingBrokerUrl = 'http://localhost:8080/thingbroker';
 
     function registerThing(params) {
       if (params.debug) 
-        console.log("Registering parent"+params.thingId);
+        console.log("Registering parent "+params.thingId);
       $.ajax({
         type: "POST",
         crossDomain: true,
@@ -208,16 +208,41 @@ var thingBrokerUrl = 'http://localhost:8080/thingbroker';
         }
       }
     };
+    function setCookie(c_name,value,exdays){
+       var exdate=new Date();
+       exdate.setDate(exdate.getDate() + exdays);
+       var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+       document.cookie=c_name + "=" + c_value;
+    }
+
 
     //if a cookie "display_id" is set: change thingid to add such id, unless functionality toggled false.
     function containerSafeThing(params) { 
-      if (params.container) {
-        var display=getCookie("display_id");
-        if (display!=null && display!="") {	  
-	  params.thingId = params.thingId + display;
-          if (params.debug)
-             console.log("Setting container safe thingId name "+params.thingId);
-	}
+       if (params.container) {
+          var display = '';
+          var thingbroker_url = '';
+          if ( location.href.indexOf("?") !== -1) {
+             var urlparams = location.href.split('?')[1].split('&');
+             data = {};
+             for (x in urlparams) {
+                data[urlparams[x].split('=')[0]] = urlparams[x].split('=')[1];
+             }
+             display = data.display_id;
+             thingbroker_url = decodeURIComponent(data.thingbroker_url);
+          } else {
+             display = getCookie("display_id");
+          }
+          if (display!==null && display!=="" && display!==undefined) {
+	    params.thingId = params.thingId + display;
+            if (params.debug)
+              console.log("Setting container safe thingId name "+params.thingId);
+	  } 
+          if (thingbroker_url!==null && thingbroker_url!=="" && thingbroker_url!==undefined) {
+            params.url = thingbroker_url;
+            if (params.debug)
+              console.log("Setting container safe thingbroker_url "+params.url);
+          }
+
       }
       return params;
     };
@@ -237,7 +262,9 @@ jQuery.ThingBroker  = function(params) {
     params = $.extend({
         url:thingBrokerUrl,
 	thingId: '',
-        debug: false
+        event: {},
+        debug: false,
+        container: true
     },params);
 
   var getEvents = function(thingId, limit) {
@@ -303,12 +330,11 @@ jQuery.ThingBroker  = function(params) {
   }
 
   var postEvent = function(thingId, event) {
-     if (params.debug)
-        console.log("Sending event for "+thingId);
      var response = {}
      thingId = thingId.replace('#', '');
      thingId = containerSafeThingId(thingId);
-
+     if (params.debug)
+        console.log("Sending an event for "+thingId);
      $.ajax({
         async: false,
   	type: "POST",
@@ -325,18 +351,34 @@ jQuery.ThingBroker  = function(params) {
      return response;
   } 
 
-
   function containerSafeThingId(thingId) { 
-      var display=getCookie("display_id");
-      if (display!=null && display!="") {	  
-	thingId = thingId + display;
+     var display = '';
+     var thingbroker_url = '';
+     if ( location.href.indexOf("?") !== -1) {
+        var urlparams = location.href.split('?')[1].split('&');
+        data = {};
+        for (x in urlparams) {
+           data[urlparams[x].split('=')[0]] = urlparams[x].split('=')[1];
+        }
+        display = data.display_id;
+        thingbroker_url = decodeURIComponent(data.thingbroker_url);
+     } else {
+        display = getCookie("display_id");
+     }
+     if (display!==null && display!=="" && display!==undefined) {
+        thingId = thingId + display;
         if (params.debug)
-           console.log("Setting container safe thingId name "+thingId);
-      }    
+           console.log("Setting container safe thingId name "+params.thingId);
+    }
+    if (thingbroker_url!==null && thingbroker_url!=="" && thingbroker_url!==undefined) {
+            params.url = thingbroker_url;
+            if (params.debug)
+              console.log("Setting container safe thingbroker_url "+params.url);
+    }
     return thingId;
   };
 
-    function getCookie(c_name){
+  function getCookie(c_name){
       var i,x,y,ARRcookies=document.cookie.split(";");
       for (i=0;i<ARRcookies.length;i++) {
         x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
