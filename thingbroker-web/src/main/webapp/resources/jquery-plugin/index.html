@@ -3,9 +3,8 @@
 <head>  
 <title>Shout</title>  
 <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="jquery.thingbroker.min.js"></script>
+<script type="text/javascript" src="jquery.thingbroker.js"></script>
 <script type="text/javascript" src="processing-1.4.1.min.js"></script>
-
 
 <style type="text/css">
   p {color:gray;font-size:16px; font-style:bold; width:100px; height:100px; background-color:#E9E74A; float:left; margin-left:5px; margin-top:5px;padding:4px}
@@ -21,9 +20,10 @@ function drawSomeText(id) {
 function submitTask(id) {
   var taskText = document.getElementById('inputtext').value;
   var event = {task:taskText};
-  var t = $.ThingBroker();
+  var t = $.ThingBroker({debug:true});
   t.postThing("#tasks"); 
   var e = t.postEvent("#tasks", event);
+  
 }
 
 function visualizeTasks(id) {
@@ -35,7 +35,7 @@ function visualizeTasks(id) {
 function appendChat() {
   var t = document.getElementById('inputtext').value;
   var event = {append:"<p>"+t+"</p>"};
-  $.ThingBroker().postEvent("#chat", event);
+  $.ThingBroker({debug:true}).postEvent("#chat", event);
 }
 
 </script>
@@ -57,12 +57,10 @@ function appendChat() {
 
 <script type="text/javascript">
 
-document.cookie="display_id=1";
-
-$("#chat").thing({listen:true});
+$("#chat").thing({listen:true, debug: true});
 $("#txtbox").keypress(function(e){
     if (e.which == 13) {
-        $(this).thing({prepend:'<p>'+$(this).val()+'</p>', to: '#chat'});    
+        $(this).thing({prepend:'<p>'+$(this).val()+'</p>', to: '#chat', debug: true});    
         $(this).val("");	
     }
 });
