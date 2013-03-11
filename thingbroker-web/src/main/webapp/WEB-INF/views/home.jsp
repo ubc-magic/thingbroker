@@ -86,14 +86,13 @@
 					<ul class="nav">
 						<li class="active"><a href="#">Home</a></li>
 						<li><a href="https://github.com/ubc-magic/thingbroker/wiki">Documentation</a></li>
-						<li><a href="resources/jquery-plugin">Demos</a></li>
+						<li><a href="resources/jquery-plugin/index.html?thingbroker_url=http%3A%2F%2Flocalhost%3A8080%2Fthingbroker">Demos</a></li>
 					</ul>
 				</div>
 				<!--/.nav-collapse -->
 			</div>
 		</div>
 	</div>
-
 	<div class="container">
 		<h1>Welcome to the Thing Broker</h1>
     	<div class="row">
