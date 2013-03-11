@@ -27,8 +27,7 @@ $.ThingBroker().getThing("thingId")
  */
 
 /*Nerve-wreking global variable*/
-//http://localhost:8080/thingbroker
-var thingBrokerUrl = 'http://kimberly.magic.ubc.ca:8080/thingbroker';
+var thingBrokerUrl = 'http://localhost:8080/thingbroker';
 
 (function($) {
   
