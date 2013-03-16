@@ -3,32 +3,44 @@
 * Author: Roberto Calderon
 *
 
-EVENTS
-(#id).thing("append": "<p>helloworld</p>", to: "#id2")
-(#id).thing("prepend": "<p>helloworld</p>", to: "#id2")
-(#id).thing("remove": "<p>helloworld</p>", to: "#id2")
-(#id).thing("src": "http://localhost/img.jpg", to: "#id2")
 
-LISTENER THING
-(#id).thing(listen:true)
-
-OTHER METHODS
-(#id).thing("follow": "#id2")
-
-**********************************************************
-
-THINGBROKER API METHODS (BUNDLED WITH THE JQUERY PLUGIN)
-
-$.ThingBroker({url: "http:url/thingbroker"}).postThing("thingId")
-$.ThingBroker().postEvent("thingId", {key:value})
-$.ThingBroker().getEvents("thingId")
-$.ThingBroker().getThing("thingId")
 
  */
 
 /*Nerve-wreking global variable*/
-//http://localhost:8080/thingbroker
 var thingBrokerUrl = 'http://kimberly.magic.ubc.ca:8080/thingbroker';
+
+
+/*Global Functions*/
+
+function setUniqueId(thingId) {   
+   var device_id = getCookie("device_id");
+   if (device_id == undefined){
+      var device_id = (new Date).getTime();
+      setCookie("device_id", device_id, 365);
+   }   
+   return thingId + device_id;
+}
+
+function getCookie(c_name){
+   var i,x,y,ARRcookies=document.cookie.split(";");
+   for (i=0;i<ARRcookies.length;i++) {
+     x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+     y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+     x=x.replace(/^\s+|\s+$/g,"");
+     if (x==c_name) {
+       return unescape(y);
+     }
+   }
+};
+function setCookie(c_name,value,exdays){
+   var exdate=new Date();
+   exdate.setDate(exdate.getDate() + exdays);
+   var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+   document.cookie=c_name + "=" + c_value;
+}
+
+/*ThingBroker jQuery plugin*/
 
 (function($) {
   
@@ -39,7 +51,8 @@ var thingBrokerUrl = 'http://kimberly.magic.ubc.ca:8080/thingbroker';
 	thingId: this.attr('id'),
         thingName: this.attr('id'),
         thingType: "Web Object",
-        thingIdUnique: this.attr('id')+(new Date).getTime(),
+        //thingIdUnique: this.attr('id')+(new Date).getTime(),
+        thingIdUnique: setUniqueId(this.attr('id')),
         listen: false,
         eventCallback: null,
         event_key: '',
@@ -196,25 +209,6 @@ var thingBrokerUrl = 'http://kimberly.magic.ubc.ca:8080/thingbroker';
        });
        getEvents(params, obj);
     };
-
-    function getCookie(c_name){
-      var i,x,y,ARRcookies=document.cookie.split(";");
-      for (i=0;i<ARRcookies.length;i++) {
-        x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-        y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-        x=x.replace(/^\s+|\s+$/g,"");
-        if (x==c_name) {
-          return unescape(y);
-        }
-      }
-    };
-    function setCookie(c_name,value,exdays){
-       var exdate=new Date();
-       exdate.setDate(exdate.getDate() + exdays);
-       var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-       document.cookie=c_name + "=" + c_value;
-    }
-
 
     //if a cookie "display_id" is set: change thingid to add such id, unless functionality toggled false.
     function containerSafeThing(params) { 
@@ -395,19 +389,6 @@ jQuery.ThingBroker  = function(params) {
     }
     return thingId;
   };
-
-  function getCookie(c_name){
-      var i,x,y,ARRcookies=document.cookie.split(";");
-      for (i=0;i<ARRcookies.length;i++) {
-        x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-        y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-        x=x.replace(/^\s+|\s+$/g,"");
-        if (x==c_name) {
-          return unescape(y);
-        }
-      }
-    };
-
   return {
     postThing: postThing,
     postEvent: postEvent,
@@ -416,4 +397,5 @@ jQuery.ThingBroker  = function(params) {
     getThing: getThing
   }
 };
+
 
