@@ -18,8 +18,9 @@ import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
 
 /**
- * This controller deals with Thing meta data
- * @author mike
+ * This controller deals with Thing meta data.
+ * 
+ * @author Ricardo Almeida, Mike Blackstock
  *
  */
 @Controller
@@ -34,7 +35,6 @@ public class MetaDataController {
 		this.thingService = thingService;
 	}
 	
-
 	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public Object retrieveThingMetadata(@PathVariable String thingId) {

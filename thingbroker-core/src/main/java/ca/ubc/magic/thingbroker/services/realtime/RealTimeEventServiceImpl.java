@@ -23,14 +23,17 @@ import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
 
 /**
- * @author mike
+ * Real time retrieval of events
+ * 
+ * @author Mike Blackstock, Ricardo Almeida
  *
  */
 public class RealTimeEventServiceImpl implements RealTimeEventService, DisposableBean {
 	private static final Log logger = LogFactory.getLog(RealTimeEventService.class);
 
 	/**
-	 * things that the system is currently tracking for real time events
+	 * things that the system is currently tracking for real time events.
+	 * thing id to ThingEventHandler
 	 */
 	private Map<String, ThingEventHandler> things;
 	private Connection connection;

@@ -32,6 +32,12 @@ import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
 import ca.ubc.magic.utils.Messages;
 import ca.ubc.magic.utils.Utils;
 
+/**
+ * Event service implementation
+ * 
+ * @author Ricardo Almeida, Mike Blackstock
+ *
+ */
 public class EventServiceImpl implements EventService {
 	static final Log logger = LogFactory.getLog(EventServiceImpl.class);
 
@@ -123,7 +129,8 @@ public class EventServiceImpl implements EventService {
 	}
 	
 	/**
-	 * Get the events from a thing.
+	 * Get the events from a thing.  First we query past events.  If we don't get any, 
+	 * we then wait for real time events.
 	 * 
 	 * @param thingId Id of the thing
 	 * @param waitTime time to wait

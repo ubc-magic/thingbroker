@@ -3,7 +3,7 @@ package ca.ubc.magic.thingbroker.model;
 import java.io.Serializable;
 
 
-public class StateInformation implements Serializable {
+public class StateField implements Serializable {
 	/**
 	 * 
 	 */
@@ -12,6 +12,7 @@ public class StateInformation implements Serializable {
 	private String name;
 	private Object value;
 	private Integer index;
+	private Object metadata;
 
 	public Long getTimestamp() {
 		return timestamp;
@@ -43,6 +44,14 @@ public class StateInformation implements Serializable {
 
 	public void setIndex(Integer index) {
 		this.index = index;
+	}
+
+	public Object getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Object metadata) {
+		this.metadata = metadata;
 	}
 
 }

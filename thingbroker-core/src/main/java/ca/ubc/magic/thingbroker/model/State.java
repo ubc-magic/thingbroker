@@ -9,13 +9,13 @@ public class State implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Map<String,StateInformation> stateInformation;
+	private Map<String,StateField> stateInformation;
 
-	public Map<String, StateInformation> getStateInformation() {
+	public Map<String, StateField> getStateInformation() {
 		return stateInformation;
 	}
 
-	public void setStateInformation(Map<String, StateInformation> stateInformation) {
+	public void setStateInformation(Map<String, StateField> stateInformation) {
 		this.stateInformation = stateInformation;
 	}
 }

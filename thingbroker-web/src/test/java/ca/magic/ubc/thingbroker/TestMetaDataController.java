@@ -15,7 +15,10 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 
 /**
- * @author mike
+ * Integration test for thing meta data controller.
+ * 
+ * @author 
+ * @author Ricardo Almeida, Mike Blackstock
  *
  */
 public class TestMetaDataController extends TestControllerBase {

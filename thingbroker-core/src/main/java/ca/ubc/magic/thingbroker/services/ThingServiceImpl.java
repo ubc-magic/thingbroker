@@ -13,6 +13,14 @@ import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;
 import ca.ubc.magic.utils.Messages;
 
+/**
+ * 
+ * Implementation of ThingService for managing things and various fields.
+ * Can be optimized.
+ * 
+ * @author Ricardo Almeida, Mike Blackstock
+ *
+ */
 public class ThingServiceImpl implements ThingService {
 
 	private ThingDAO thingDao;
@@ -24,6 +32,8 @@ public class ThingServiceImpl implements ThingService {
 	}
 	
 	public Thing storeThing(Thing thing) throws ThingBrokerException {
+		
+		// TODO: mongo should generate ids if we don't supply an ID?
 		if (thing.getThingId() == null || thing.getThingId().equals("")) {
 			thing.setThingId(UUID.randomUUID().toString());
 		} else {

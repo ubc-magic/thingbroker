@@ -9,6 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * CORS filter for cross domain access.
+ * 
+ * @author Ricardo Almeida, Mike Blackstock
+ *
+ */
 public class CorsFilter extends OncePerRequestFilter {
 	 
     @Override

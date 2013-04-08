@@ -11,6 +11,12 @@ import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Thing;
 
+/**
+ * Thing Data Access Object.
+ * 
+ * @author Roberto Almeida, Mike Blackstock
+ *
+ */
 public class ThingDAO {
 
 	private MongoOperations mongoOperation;

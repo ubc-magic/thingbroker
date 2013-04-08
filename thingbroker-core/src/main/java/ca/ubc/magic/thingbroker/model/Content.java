@@ -6,6 +6,12 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.springframework.data.annotation.Id;
 
+/**
+ * Content associated with an event.
+ * 
+ * @author Ricardo Almeida, Mike Blackstock
+ *
+ */
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Content {
 	@Id

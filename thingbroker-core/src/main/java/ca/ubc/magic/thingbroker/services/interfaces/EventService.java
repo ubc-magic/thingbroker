@@ -28,8 +28,7 @@ public interface EventService {
 	 * @return
 	 * @throws ThingBrokerException
 	 */
-	public Event update(Event event, Content[] data)
-			throws ThingBrokerException;
+	public Event update(Event event, Content[] data) throws ThingBrokerException;
 
 	public Event retrieve(Event event);
 
@@ -46,17 +45,15 @@ public interface EventService {
 
 	public Content retrieveEventData(Content eventData) throws Exception;
 
-	public Content retrieveEventDataInfo(Content eventData)
-			throws Exception;
+	public Content retrieveEventDataInfo(Content eventData) throws Exception;
 
 	/**
-	 * Update the info field
+	 * Update the info field of an event
 	 * 
 	 * @param event
 	 * @param info
 	 * @return
 	 * @throws Exception
 	 */
-	public Event addDataToInfoField(Event event, HashMap<String, Object> info)
-			throws Exception;
+	public Event addDataToInfoField(Event event, HashMap<String, Object> info) throws Exception;
 }

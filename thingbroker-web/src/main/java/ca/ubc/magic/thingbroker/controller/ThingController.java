@@ -23,7 +23,7 @@ import ca.ubc.magic.utils.Messages;
 /**
  * This controller deals with things.
  * 
- * @author mike
+ * @author Ricardo Almeida, Mike Blackstock
  *
  */
 @Controller
