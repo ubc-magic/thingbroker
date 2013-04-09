@@ -4,9 +4,7 @@ import java.io.Serializable;
 
 
 public class StateField implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private Long timestamp;
 	private String name;
