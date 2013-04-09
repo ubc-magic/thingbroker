@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import ca.ubc.magic.thingbroker.controller.config.Constants;
-import ca.ubc.magic.thingbroker.controller.dao.ThingDAO;
+import ca.ubc.magic.thingbroker.config.Constants;
+import ca.ubc.magic.thingbroker.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.ThingService;

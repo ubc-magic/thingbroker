@@ -1,4 +1,4 @@
-package ca.ubc.magic.thingbroker.controller.config;
+package ca.ubc.magic.thingbroker.config;
 
 public class Constants {
 

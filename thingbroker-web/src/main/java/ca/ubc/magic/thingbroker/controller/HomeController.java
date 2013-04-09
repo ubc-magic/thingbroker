@@ -1,4 +1,4 @@
-package ca.ubc.magic.thingbroker;
+package ca.ubc.magic.thingbroker.controller;
 
 import java.util.Locale;
 

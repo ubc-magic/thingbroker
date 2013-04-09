@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import ca.ubc.magic.thingbroker.controller.config.Constants;
+import ca.ubc.magic.thingbroker.config.Constants;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
-import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Content;
+import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 import ca.ubc.magic.utils.Messages;

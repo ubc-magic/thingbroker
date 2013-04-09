@@ -1,4 +1,4 @@
-package ca.ubc.magic.thingbroker.config;
+package ca.ubc.magic.thingbroker.controller;
 
 import java.io.IOException;
 

@@ -19,10 +19,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
-import ca.ubc.magic.thingbroker.controller.config.Constants;
-import ca.ubc.magic.thingbroker.controller.dao.EventDAO;
-import ca.ubc.magic.thingbroker.controller.dao.EventDataDAO;
-import ca.ubc.magic.thingbroker.controller.dao.ThingDAO;
+import ca.ubc.magic.thingbroker.config.Constants;
+import ca.ubc.magic.thingbroker.dao.EventDAO;
+import ca.ubc.magic.thingbroker.dao.EventDataDAO;
+import ca.ubc.magic.thingbroker.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Content;

@@ -1,5 +1,11 @@
 package ca.ubc.magic.thingbroker.model;
 
+/**
+ * Error message
+ * 
+ * @author Ricardo Almeida
+ *
+ */
 public class StatusMessage {
 	private Integer code;
 	private String message;

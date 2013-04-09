@@ -24,7 +24,7 @@
 
   <filter>
     <filter-name>cors</filter-name>
-    <filter-class>ca.ubc.magic.thingbroker.config.CorsFilter</filter-class>
+    <filter-class>ca.ubc.magic.thingbroker.controller.CorsFilter</filter-class>
   </filter>
   
   <filter-mapping>

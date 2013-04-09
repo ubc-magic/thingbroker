@@ -60,16 +60,16 @@
 		<constructor-arg value="thingbroker"/>
 	</bean>
 
-	<bean id="eventDao" class="ca.ubc.magic.thingbroker.controller.dao.EventDAO">
+	<bean id="eventDao" class="ca.ubc.magic.thingbroker.dao.EventDAO">
 		<constructor-arg ref="mongoDBTemplate"/>
 		<constructor-arg ref="eventDataDao"/>
 	</bean>
 		
-	<bean id="eventDataDao" class="ca.ubc.magic.thingbroker.controller.dao.EventDataDAO">
+	<bean id="eventDataDao" class="ca.ubc.magic.thingbroker.dao.EventDataDAO">
 		<constructor-arg ref="mongoStorageTemplate"/>
 	</bean>
 	
-	<bean id="thingDao" class="ca.ubc.magic.thingbroker.controller.dao.ThingDAO">
+	<bean id="thingDao" class="ca.ubc.magic.thingbroker.dao.ThingDAO">
 		<constructor-arg ref="mongoDBTemplate"/>
 		<constructor-arg ref="eventDao"/>
 	</bean>

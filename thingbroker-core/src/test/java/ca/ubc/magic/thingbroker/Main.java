@@ -12,9 +12,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
-import ca.ubc.magic.thingbroker.controller.dao.EventDAO;
-import ca.ubc.magic.thingbroker.controller.dao.EventDataDAO;
-import ca.ubc.magic.thingbroker.controller.dao.ThingDAO;
+import ca.ubc.magic.thingbroker.dao.EventDAO;
+import ca.ubc.magic.thingbroker.dao.EventDataDAO;
+import ca.ubc.magic.thingbroker.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Thing;
 

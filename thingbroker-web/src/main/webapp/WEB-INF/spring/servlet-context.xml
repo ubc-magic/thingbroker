@@ -52,7 +52,7 @@
 	</beans:bean>
 		
 	<beans:bean id="homeController"
-		class="ca.ubc.magic.thingbroker.HomeController">
+		class="ca.ubc.magic.thingbroker.controller.HomeController">
 	</beans:bean>
 
 </beans:beans>

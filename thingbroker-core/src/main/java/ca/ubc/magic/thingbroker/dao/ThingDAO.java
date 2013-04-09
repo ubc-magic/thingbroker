@@ -1,4 +1,4 @@
-package ca.ubc.magic.thingbroker.controller.dao;
+package ca.ubc.magic.thingbroker.dao;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package ca.ubc.magic.thingbroker.controller.dao;
+package ca.ubc.magic.thingbroker.dao;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
