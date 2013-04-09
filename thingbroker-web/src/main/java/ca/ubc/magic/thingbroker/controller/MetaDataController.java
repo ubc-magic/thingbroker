@@ -53,9 +53,35 @@ public class MetaDataController {
 		}
 	}
 	
+	/**
+	 * Create (POST) metadata for a thing; synonymous with updating (PUT) metadata.
+	 * Note that this call does not replace metadata, it creates or updates the included fields.
+	 * 
+	 * @param thingId
+	 * @param metadata
+	 * @return thing with updated metadata
+	 */
 	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.POST, consumes ="application/json", produces = "application/json")
 	@ResponseBody
-	public Object addThingMetadata(@PathVariable String thingId, @RequestBody Map<String,Object> metadata) {
+	public Object postMetadata(@PathVariable String thingId, @RequestBody Map<String,Object> metadata) {
+		return updateMetadata(thingId, metadata);
+	}
+	
+	/**
+	 * Update (PUT) metadata for a thing; synonymous with creating (POST) metadata.
+	 * Note that this call does not replace metadata, it creates or updates the included fields.
+	 * 
+	 * @param thingId
+	 * @param metadata
+	 * @return thing with updated metadata
+	 */
+	@RequestMapping(value = "/{thingId}/metadata",method = RequestMethod.PUT, consumes ="application/json", produces = "application/json")
+	@ResponseBody
+	public Object putMetadata(@PathVariable String thingId, @RequestBody Map<String,Object> metadata) {
+		return updateMetadata(thingId, metadata);
+	}
+	
+	private Object updateMetadata(String thingId, Map<String,Object> metadata) {
 		try {
 		  Thing thing = new Thing(thingId);
 		  thing.setMetadata(metadata);
