@@ -5,10 +5,35 @@ import java.util.List;
 import java.util.Map;
 
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
-import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Content;
+import ca.ubc.magic.thingbroker.model.Event;
 
 public interface EventService {
+	
+	public enum Filter {
+		ALL("all"),
+		FOLLOWING_ONLY("following-only"),
+		THING_ONLY("thing-only");
+		
+		Filter(String param) {
+			this.param = param;
+		}
+		private final String param;
+		public String getParam() {
+			return this.param;
+		}
+
+		public static Filter fromString(String text) {
+			if (text != null) {
+				for (Filter b : Filter.values()) {
+					if (text.equalsIgnoreCase(b.param)) {
+						return b;
+					}
+				}
+			}
+			throw new IllegalArgumentException("No constant with text " + text + " found");
+		}
+	}
 	
 	/**
 	 * Send/Create an event
@@ -41,7 +66,7 @@ public interface EventService {
 	 * @param followingOnly only get events from things the thing is following
 	 * @return
 	 */
-	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, boolean followingOnly);
+	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, Filter filter);
 
 	public Content retrieveEventData(Content eventData) throws Exception;
 

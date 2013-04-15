@@ -12,9 +12,11 @@
 	
 	<!-- Application Loggers -->
 	<logger name="ca.ubc.magic">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
-	
+	<logger name="org.apache.activemq.broker">
+		<level value="info" />
+	</logger>	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
 		<level value="info" />
@@ -31,6 +33,8 @@
 	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
+	
+	
 
 	<!-- Root Logger -->
 	<root>

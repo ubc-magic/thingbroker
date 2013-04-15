@@ -3,6 +3,7 @@
  */
 package ca.ubc.magic.thingbroker.services.realtime;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.DisposableBean;
 
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
 import ca.ubc.magic.thingbroker.model.Event;
+import ca.ubc.magic.thingbroker.model.Thing;
+import ca.ubc.magic.thingbroker.services.interfaces.EventService.Filter;
 import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
 
 /**
@@ -64,10 +67,29 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService#getEvents(java.lang.String, java.util.Set, int, boolean)
 	 */
 	@Override
-	public List<Event> getEvents(String thingId, Set<String> following, int waitTime, boolean followingOnly) {
+	public List<Event> getEvents(Thing thing, int waitTime, Filter filter) {
 		// if we got here, we know we need real time events
 		// first see if we are alreading getting real time messages for the thing
-		ThingEventHandler thingHandler = things.get(thingId);
+		ThingEventHandler thingHandler = things.get(thing.getThingId());
+		Set<String> following = new HashSet<String>(thing.getFollowing());
+		String thingId = thing.getThingId();
+		
+		// first figure out what things we should be following or not
+		switch (filter) {
+		case FOLLOWING_ONLY:
+			// done - following list contains only the followers
+			break;
+		case THING_ONLY:
+			// clear the following list
+			following.clear();
+		case ALL:
+			// add ourself
+			following.add(thingId);
+			break;
+		}
+		// 'following' now contains the things we should be getting events from from this thingHandler
+		logger.debug("get real time:"+thingId+" on "+following);
+		
 		Session session;
 		try {
 			// create a ThingHandler if we need to, allocates a JMS session and a 
@@ -82,29 +104,24 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 				// add it for next time
 				things.put(thingId, thingHandler);
 			}
-
 			// sync up the followers -- all of the things we are following
-			// creates or removes message consumers for each
+			// this will create or remove message consumers for each
 			
-			// 1 - remove any things we're no longer following
-			for(String f: thingHandler.getFollowing()) {
-				if (!following.contains(f))
-					thingHandler.removeFollower(f);
-			}
-			
-			// 2 - add any things we should be following but we are not
+			// 1 - add any things we should be following but we are not
 			for (String f: following) {
 				if (!thingHandler.isFollowing(f)) {
-					thingHandler.addFollower(f);
+					thingHandler.addFollowing(f);
 				}
 			}
-			
-			// finally, should we follow ourselves?
-			if (followingOnly && thingHandler.isFollowing(thingId)) {
-				thingHandler.removeFollower(thingId);
-			} else if (!followingOnly && (!thingHandler.isFollowing(thingId))) {
-				thingHandler.addFollower(thingId);
+
+			// 2 - remove any things we're no longer following
+			for(String f: thingHandler.getFollowing()) {
+				if (!following.contains(f))
+					thingHandler.removeFollowing(f);
 			}
+						
+			// note that changes in who we are following will
+			// only affect newly received events
 			return thingHandler.getEvents(waitTime);
 
 		} catch (JMSException e) {
@@ -139,6 +156,12 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 				eventHandler.cleanUp();
 			}
 		}
+	}
+
+	@Override
+	public List<Event> getEvents(String appId, Thing thing, int waitTime, Filter filter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

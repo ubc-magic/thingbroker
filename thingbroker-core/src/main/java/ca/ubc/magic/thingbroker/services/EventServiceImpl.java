@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -24,8 +23,8 @@ import ca.ubc.magic.thingbroker.dao.EventDAO;
 import ca.ubc.magic.thingbroker.dao.EventDataDAO;
 import ca.ubc.magic.thingbroker.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
-import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Content;
+import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
 import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
@@ -137,20 +136,16 @@ public class EventServiceImpl implements EventService {
 	 * @param followingOnly get events only from the things it is following
 	 * @return
 	 */
-	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, boolean followingOnly) {
+	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, Filter filter) {
 		Thing t = thingDao.getThing(thingId);
-		Set<String> following = t.getFollowing();
-		// add self to list of things we're following
-		if (!followingOnly)
-			following.add(thingId);
-		
-		// do a query for events
-		List<Event> events = eventDao.getEvents(thingId, following, queryParams, followingOnly);
+	
+		// do a query for past events first
+		List<Event> events = eventDao.getEvents(t, queryParams, filter);
 		
 		if (events.size() > 0)
 			return events;
 		
-		return realTimeEventService.getEvents(thingId, following, waitTime, followingOnly);
+		return realTimeEventService.getEvents(t, waitTime, filter);
 	}
 
 	public Content retrieveEventData(Content eventData) throws Exception {

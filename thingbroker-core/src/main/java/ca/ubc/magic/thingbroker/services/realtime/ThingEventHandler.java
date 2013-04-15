@@ -77,9 +77,9 @@ public class ThingEventHandler implements MessageListener {
 
 	public void onMessage(Message message) {
 		try {
-			logger.debug("no messages");
 			MapMessage ac = (MapMessage) message;
 			Event event = Utils.parseToObject(ac.getString("event"),Event.class);
+			logger.debug("event received:"+event);
 			messageQueue.offer(event);
 		} catch (JMSException jmse) {
 			logger.error("JMSException", jmse);
@@ -92,14 +92,14 @@ public class ThingEventHandler implements MessageListener {
 
 	public void cleanUp() {
 		try {
-			// this will close any messageconsumers as well (http://docs.oracle.com/javaee/1.4/api/javax/jms/Session.html#close())
+			// this will close any message consumers as well (http://docs.oracle.com/javaee/1.4/api/javax/jms/Session.html#close())
 			this.session.close();
 		} catch (JMSException e) {
 			logger.error("error while closing JMS consumer or session");
 		}
 	}
 
-	public void addFollower(String followerThing, MessageConsumer consumer) {
+	public void addFollowing(String followerThing, MessageConsumer consumer) {
 		following.put(followerThing, consumer);
 	}
 	
@@ -107,20 +107,25 @@ public class ThingEventHandler implements MessageListener {
 		return following.keySet();
 	}
 	
-	public void removeFollower(String followerThing) {
+	public void removeAllFollowing() {
+		following.clear();
+	}
+	
+	public void removeFollowing(String followerThing) {
 		MessageConsumer consumer = following.get(followerThing);
 		if (consumer != null)
 			try {
 				consumer.close();
+				following.remove(followerThing);
 			} catch (JMSException e) {
 				logger.error("error while closing consumer");
 			}
 	}
 	
-	public void addFollower(String following) throws JMSException {
+	public void addFollowing(String following) throws JMSException {
 		Destination thingQueue = session.createTopic("thingbroker.things.thing." + following);
 		MessageConsumer consumer = session.createConsumer(thingQueue);
-		addFollower(following, consumer);
+		addFollowing(following, consumer);
 		consumer.setMessageListener(this);		
 	}
 

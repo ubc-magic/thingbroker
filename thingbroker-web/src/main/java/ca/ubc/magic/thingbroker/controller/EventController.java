@@ -24,6 +24,7 @@ import ca.ubc.magic.thingbroker.model.Content;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.StatusMessage;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
+import ca.ubc.magic.thingbroker.services.interfaces.EventService.Filter;
 import ca.ubc.magic.utils.Messages;
 
 @Controller
@@ -207,12 +208,13 @@ public class EventController {
 		try {
 			Event event = new Event();
 			event.setThingId(thingId);
-			int waitTime = params.get("waitTime") == null?10:Integer.parseInt(params.get("waitTime"));
-			boolean followingOnly = params.get("followingOnly") == null?false:Boolean.parseBoolean(params.get("followingOnly"));
+			int waitTime = params.get("waitTime") == null?10:Integer.parseInt(params.get("waitTime"));			
 			
-			return eventService.getEvents(thingId, params, waitTime, followingOnly);
-			
-//			return eventService.retrieveByCriteria(event, params);
+			// for backward compatibility
+			Filter filter = params.get("followingOnly") == null?Filter.ALL:Filter.FOLLOWING_ONLY;
+			// filter parameter
+			filter = params.get("filter") == null?Filter.ALL:Filter.fromString(params.get("filter"));
+			return eventService.getEvents(thingId, params, waitTime, filter);
 		}		
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();

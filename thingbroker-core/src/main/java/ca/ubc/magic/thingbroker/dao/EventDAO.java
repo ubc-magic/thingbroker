@@ -12,8 +12,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 
-import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Content;
+import ca.ubc.magic.thingbroker.model.Event;
+import ca.ubc.magic.thingbroker.model.Thing;
+import ca.ubc.magic.thingbroker.services.interfaces.EventService.Filter;
 
 /**
  * Event Data Access Object for storing events
@@ -40,7 +42,9 @@ public class EventDAO {
 			}
 			event.setContent(eventData);
 		}
-		mongoOperation.save(event, "events");
+		// ensure the id is null, so we don't update an old one
+		event.setEventId(null);
+		mongoOperation.insert(event, "events");
 		return event;
 	}
 
@@ -99,15 +103,19 @@ public class EventDAO {
 		return new LinkedHashSet<Event>();
 	}
 
-	public List<Event> getEvents(String thingId, Set<String> thingIds,
-			Map<String, String> queryParams, boolean followingOnly) {
+	public List<Event> getEvents(Thing t, Map<String, String> queryParams, Filter filter) {
 
+		// start building query
 		boolean doQuery = false;
 
-		Set<String> thingSet = new HashSet<String>(thingIds);
-		if (!followingOnly)
-			thingSet.add(thingId);
+		Set<String> thingSet = new HashSet<String>();
 
+		// add things to get events from
+		if (filter == Filter.THING_ONLY || filter == Filter.ALL)
+			thingSet.add(t.getThingId());
+		if (filter == Filter.ALL || filter == Filter.FOLLOWING_ONLY)
+			thingSet.addAll(t.getFollowing());
+		
 		// first append all of the thing ids
 		Criteria c = Criteria.where("thingId").in(thingSet);
 
@@ -134,7 +142,6 @@ public class EventDAO {
 			long after = Long.parseLong(queryParams.get("after"));
 			c.and("serverTimestamp").gt(startTime).lte(startTime + after);
 			doQuery = true;
-
 		}
 
 		// then modify query with offset and limit
