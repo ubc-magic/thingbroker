@@ -13,7 +13,7 @@ var thingBrokerUrl = 'http://kimberly.magic.ubc.ca:8080/thingbroker';
 
 /*Global Functions*/
 
-function setUniqueId(thingId) {   
+function setUniqueId(thingId) {
    var device_id = getCookie("device_id");
    if (device_id == undefined){
       var device_id = (new Date).getTime();
@@ -285,10 +285,49 @@ jQuery.ThingBroker  = function(params) {
     return eventMap;
   }
 
-  var postThing = function(thingId) {
+  var postThing = function(json) {
+    if (params.debug) 
+       console.log("Registering "+json);    
+    if (json.thingId) {
+       json.thingId = json.thingId.replace('#', '');
+       json.thingId = containerSafeThingId(json.thingId);
+    }
+    var thingMap = {};
+    $.ajax({
+       type: "POST",
+       crossDomain: true,
+       url: params.url+"/things",
+       data: JSON.stringify(json),
+       contentType: "application/json",
+       dataType: "JSON",
+       error: function(json) {connectionError(json)},
+    });
+    return thingMap;    
+  }
+
+  var deleteThing = function(thingId) {
+    if (params.debug) 
+       console.log("Deleting "+thingId);    
+    thingId = thingId.replace('#', '');
+    var thingMap = {};
+    $.ajax({
+       type: "DELETE",
+       crossDomain: true,
+       url: params.url+"/things/"+thingId,
+       //data: '{"thingId": "'+thingId+'"}',
+       contentType: "application/json",
+       dataType: "JSON",
+       error: function(json) {connectionError(json)},
+    });
+    return thingMap;    
+  }
+
+
+
+  var postThingById = function(thingId) {
     if (params.debug) 
        console.log("Registering thing "+thingId);
-    thingId = thingId.replace('#', '');    
+    thingId = thingId.replace('#', '');
     thingId = containerSafeThingId(thingId);
     var thingMap = {};
     $.ajax({
@@ -305,7 +344,7 @@ jQuery.ThingBroker  = function(params) {
   
   var getThing = function(thingId) {
     if (params.debug) 
-       console.log("Getting thing "+thingID);
+       console.log("Getting thing "+thingId);
     thingId = thingId.replace('#', '');    
     thingId = containerSafeThingId(thingId);
     var thingMap = {};
@@ -327,8 +366,11 @@ jQuery.ThingBroker  = function(params) {
      var response = {}
      thingId = thingId.replace('#', '');
      thingId = containerSafeThingId(thingId);
-     if (params.debug)
+     if (params.debug) {
         console.log("Sending an event for "+thingId);
+        console.log(event);
+     }
+        
      $.ajax({
         async: false,
   	type: "POST",
@@ -344,6 +386,50 @@ jQuery.ThingBroker  = function(params) {
    
      return response;
   } 
+
+  var getMetadata = function(thingId) {
+    if (params.debug) 
+       console.log("Getting metadata for thing "+thingID);
+    thingId = thingId.replace('#', '');    
+    thingId = containerSafeThingId(thingId);
+    var thingMap = {};
+    $.ajax({
+       async: false,
+       type: "GET",
+       crossDomain: true,
+       url: params.url+"/things/"+thingId+"/metadata",
+       dataType: "JSON",   
+       success: function(json) { 
+          thingMap = json;
+       },
+       error: function(){console.log("Thingbroker Connection Error.")}
+    });    
+    return thingMap;
+  }
+
+
+  var postMetadata = function (thingId, metadata) {
+     var response = {}
+     thingId = thingId.replace('#', '');
+     thingId = containerSafeThingId(thingId);
+     if (params.debug)
+       console.log("Updating Metadata "+metadata);
+     $.ajax({
+        async: false,
+  	type: "POST",
+        url: params.url+"/things/"+thingId+"/metadata",
+        data: JSON.stringify(metadata),
+        contentType: "application/json",
+	dataType: "JSON",
+        success: function(json) {
+           response = json;
+        },
+         error: function(){console.log("Thingbroker Connection Error.")}
+     });
+   
+     return response;     
+  }
+
 
   var putEvent = function(eventId, serverTimestamp, event) {
      if (params.debug)
@@ -366,26 +452,29 @@ jQuery.ThingBroker  = function(params) {
   function containerSafeThingId(thingId) { 
      var display = '';
      var thingbroker_url = '';
-     if ( location.href.indexOf("?") !== -1) {
-        var urlparams = location.href.split('?')[1].split('&');
-        data = {};
-        for (x in urlparams) {
-           data[urlparams[x].split('=')[0]] = urlparams[x].split('=')[1];
-        }
-        display = data.display_id;
-        thingbroker_url = decodeURIComponent(data.thingbroker_url);
-     } else {
-        display = getCookie("display_id");
-     }
-     if (display!==null && display!=="" && display!==undefined) {
-        thingId = thingId + display;
-        if (params.debug)
-           console.log("Setting container safe thingId name "+params.thingId);
-    }
-    if (thingbroker_url!==null && thingbroker_url!=="" && thingbroker_url!==undefined) {
-            params.url = thingbroker_url;
-            if (params.debug)
-              console.log("Setting container safe thingbroker_url "+params.url);
+     if (params.container){
+
+       if ( location.href.indexOf("?") !== -1) {
+          var urlparams = location.href.split('?')[1].split('&');
+          data = {};
+          for (x in urlparams) {
+             data[urlparams[x].split('=')[0]] = urlparams[x].split('=')[1];
+          }
+          display = data.display_id;
+          thingbroker_url = decodeURIComponent(data.thingbroker_url);
+       } else {
+          display = getCookie("display_id");
+       }
+       if (display!==null && display!=="" && display!==undefined) {
+          thingId = thingId + display;
+          if (params.debug)
+             console.log("Setting container safe thingId name "+params.thingId);
+      }
+      if (thingbroker_url!==null && thingbroker_url!=="" && thingbroker_url!==undefined) {
+              params.url = thingbroker_url;
+              if (params.debug)
+                console.log("Setting container safe thingbroker_url "+params.url);
+      }
     }
     return thingId;
   };
@@ -394,7 +483,11 @@ jQuery.ThingBroker  = function(params) {
     postEvent: postEvent,
     putEvent: putEvent,
     getEvents: getEvents,
-    getThing: getThing
+    getThing: getThing,
+    postMetadata: postMetadata,
+    getMetadata: getMetadata,
+    postThingById: postThingById,
+    deleteThing: deleteThing
   }
 };
 
