@@ -19,10 +19,12 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import ca.ubc.magic.thingbroker.config.Constants;
+import ca.ubc.magic.thingbroker.dao.ApplicationDao;
 import ca.ubc.magic.thingbroker.dao.EventDAO;
 import ca.ubc.magic.thingbroker.dao.EventDataDAO;
 import ca.ubc.magic.thingbroker.dao.ThingDAO;
 import ca.ubc.magic.thingbroker.exceptions.ThingBrokerException;
+import ca.ubc.magic.thingbroker.model.Application;
 import ca.ubc.magic.thingbroker.model.Content;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Thing;
@@ -45,17 +47,20 @@ public class EventServiceImpl implements EventService {
 	private final ThingDAO thingDao;
 	private final EventDAO eventDao;
 	private final EventDataDAO eventDataDao;
+	private final ApplicationDao applicationDao;
 	private final Messages messages;
 
 	public EventServiceImpl(JmsTemplate jmsTemplate,
 			RealTimeEventService realTimeEventService,
 			ThingDAO thingDao, EventDAO eventDao, EventDataDAO eventDataDao,
+			ApplicationDao applicationDao,
 			Messages messages) {
 		this.jmsTemplate = jmsTemplate;
 		this.realTimeEventService = realTimeEventService;
 		this.thingDao = thingDao;
 		this.eventDao = eventDao;
 		this.eventDataDao = eventDataDao;
+		this.applicationDao = applicationDao;
 		this.messages = messages;
 	}
 
@@ -136,17 +141,31 @@ public class EventServiceImpl implements EventService {
 	 * @param followingOnly get events only from the things it is following
 	 * @return
 	 */
-	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, Filter filter) {
+	public List<Event> getEvents(String appId, String thingId, Map<String, String> queryParams, int waitTime, Filter filter) {
 		Thing t = thingDao.getThing(thingId);
-	
+		Application a = null;
+
+		if (appId != null) {
+			a = applicationDao.find(appId);
+//			if (a == null)
+//				throw new ApplicationNotFound();
+		}
 		// do a query for past events first
 		List<Event> events = eventDao.getEvents(t, queryParams, filter);
 		
 		if (events.size() > 0)
 			return events;
 		
-		return realTimeEventService.getEvents(t, waitTime, filter);
+		return realTimeEventService.getEvents(a.getId(), t, waitTime, filter);
 	}
+	
+	/**
+	 * Same as above, use default application (null)
+	 */
+	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, Filter filter) {
+		return getEvents(null, thingId, queryParams, waitTime, filter);
+	}
+
 
 	public Content retrieveEventData(Content eventData) throws Exception {
 		Content data = eventDataDao.retrieve(eventData);

@@ -63,11 +63,8 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 
 	}
 	
-	/* (non-Javadoc)
-	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService#getEvents(java.lang.String, java.util.Set, int, boolean)
-	 */
 	@Override
-	public List<Event> getEvents(Thing thing, int waitTime, Filter filter) {
+	public List<Event> getEvents(String appId, Thing thing, int waitTime, Filter filter) {
 		// if we got here, we know we need real time events
 		// first see if we are alreading getting real time messages for the thing
 		ThingEventHandler thingHandler = things.get(thing.getThingId());
@@ -129,7 +126,15 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 			throw new ThingBrokerException(
 					"JMS Exception occurred when subscribing", e);
 		}		
-		
+
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService#getEvents(java.lang.String, java.util.Set, int, boolean)
+	 */
+	@Override
+	public List<Event> getEvents(Thing thing, int waitTime, Filter filter) {
+		return getEvents(null, thing, waitTime, filter);
 	}
 
 	/* (non-Javadoc)
@@ -156,12 +161,6 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 				eventHandler.cleanUp();
 			}
 		}
-	}
-
-	@Override
-	public List<Event> getEvents(String appId, Thing thing, int waitTime, Filter filter) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

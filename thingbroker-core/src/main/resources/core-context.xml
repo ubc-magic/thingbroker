@@ -14,6 +14,10 @@
 	http://activemq.apache.org/schema/core
 	http://activemq.apache.org/schema/core/activemq-core.xsd">
 
+	<bean name="applicationDao" class="ca.ubc.magic.thingbroker.dao.MongoApplicationDao">
+		<constructor-arg ref="mongoDBTemplate"/>
+	</bean>
+	
 	<bean name="messages" class="ca.ubc.magic.utils.Messages">
 		<constructor-arg>
 			<bean
@@ -34,6 +38,7 @@
 	    <constructor-arg ref="thingDao"/>
 	    <constructor-arg ref="eventDao"/>
 	    <constructor-arg ref="eventDataDao"/>
+	    <constructor-arg ref="applicationDao"/>
 	    <constructor-arg ref="messages"/>
 	</bean>
 	
