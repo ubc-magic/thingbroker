@@ -68,6 +68,10 @@ See the [ThingBroker Wiki](https://github.com/ubc-magic/thingbroker/wiki) ThingB
 
 ## Summary of Changes
 
+Apr. 25, 2013
+- added ability to get events only from the thing, not things its following (see documentation)
+- updated dependencies - now depens on Spring Framework 3.2.2
+
 Feb. 16, 2013
 - URLs are more consistent - see
 https://github.com/ubc-magic/thingbroker/wiki/Thing-Broker-API-2.
