@@ -1,6 +1,7 @@
 package ca.ubc.magic.thingbroker;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import ca.ubc.magic.thingbroker.dao.ApplicationDao;
+import ca.ubc.magic.thingbroker.model.Application;
 import ca.ubc.magic.thingbroker.model.Event;
 import ca.ubc.magic.thingbroker.model.Thing;
 import ca.ubc.magic.thingbroker.services.interfaces.EventService;
@@ -30,6 +33,8 @@ public class TestEventService {
 	private ThingService thingService;
 	@Autowired
 	private EventService eventService;
+	@Autowired
+	private ApplicationDao applicationDao;
 	
 	List<Thing> testThings;
 	Thing t1;
@@ -77,33 +82,14 @@ public class TestEventService {
 	public void testEventsHistory() {
 		
 		// now send some events to t1
-		Event event = new Event();
-		Map<String, Object> info = new HashMap<String, Object>();
-		info.put("test", 1234);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t1.getThingId());
-		eventService.create(event, null, true);
+        sendEvent(t1.getThingId(), "event1");
 		
 		// now send some events to t2
-		info = new HashMap<String, Object>();
-		info.put("test", 4567);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t2.getThingId());
-		eventService.create(event, null, true);		
+        sendEvent(t2.getThingId(), "event2");
 		
 		// now send some events to t3
-		info = new HashMap<String, Object>();
-		info.put("test", 890);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t3.getThingId());
-		eventService.create(event, null, true);	
-		
+        sendEvent(t3.getThingId(), "event3");
+			
 		// get all events to t1
 		Map<String, String> params = new HashMap<String, String>();
 		// one hour seconds before
@@ -165,36 +151,16 @@ public class TestEventService {
         Thread.sleep(1000);
         
 		// now send some events to t1
-		Event event = new Event();
-		Map<String, Object> info = new HashMap<String, Object>();
-		info.put("test", 1234);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t1.getThingId());
-		eventService.create(event, null, true);
+        sendEvent(t1.getThingId(), "event1");
 		
         Thread.sleep(1000);
 
 		// now send some events to t2
-		info = new HashMap<String, Object>();
-		info.put("test", 4567);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t2.getThingId());
-		eventService.create(event, null, true);		
-		
+        sendEvent(t2.getThingId(), "event2");
+	
         Thread.sleep(1000);
 
-		// now send some events to t3
-		info = new HashMap<String, Object>();
-		info.put("test", 890);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t3.getThingId());
-		eventService.create(event, null, true);	
+        sendEvent(t3.getThingId(), "event3");
 		
         Thread.sleep(1000);
         
@@ -230,36 +196,17 @@ public class TestEventService {
         Thread.sleep(1000);
         
 		// now send some events to t1
-		event = new Event();
-		info = new HashMap<String, Object>();
-		info.put("test", 1234);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t1.getThingId());
-		eventService.create(event, null, true);
+        sendEvent(t1.getThingId(), "event1");
 		
         Thread.sleep(1000);
 
 		// now send some events to t2
-		info = new HashMap<String, Object>();
-		info.put("test", 4567);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t2.getThingId());
-		eventService.create(event, null, true);		
+        sendEvent(t2.getThingId(), "event2");
 		
         Thread.sleep(1000);
 
 		// now send some events to t3
-		info = new HashMap<String, Object>();
-		info.put("test", 890);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t3.getThingId());
-		eventService.create(event, null, true);	
+        sendEvent(t3.getThingId(), "event3");
 		
         Thread.sleep(1000);
         
@@ -287,43 +234,112 @@ public class TestEventService {
         
         // wait a bit for the receiver thread to get ready
         Thread.sleep(1000);
-        
-
+    
 		// now send some events to t2
-		info = new HashMap<String, Object>();
-		info.put("test", 4567);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t2.getThingId());
-		eventService.create(event, null, true);		
+        sendEvent(t2.getThingId(), "event2");
 		
         Thread.sleep(1000);
 
 		// now send some events to t3
-		info = new HashMap<String, Object>();
-		info.put("test", 890);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t3.getThingId());
-		eventService.create(event, null, true);	
-		
+        sendEvent(t3.getThingId(), "event3");
         Thread.sleep(1000);
         
 		// now send some events to t1
-		event = new Event();
-		info = new HashMap<String, Object>();
-		info.put("test", 1234);
-		event.setEventId(null);
-		event.setInfo(info);
-		event.setServerTimestamp(System.currentTimeMillis());
-		event.setThingId(t1.getThingId());
-		eventService.create(event, null, true);
-		
+		sendEvent(t1.getThingId(), "event1");
         Thread.sleep(1000);
         
         t.join();        
 	}
+	
+	
+	@Test
+	public void testEventsApps() throws InterruptedException {
+	
+		Application app = new Application();
+		app.setName("test-app");
+		app = applicationDao.create(app);
+		assertNotNull(app.getId());
+		
+		// first, we make a query in the background, on another thread
+        EventListener appListener1 = new EventListener(null);
+        EventListener appListener2 = new EventListener(app.getId());
+        
+        
+        // now we get the thread going
+        Thread th1 = new Thread(appListener1);
+        Thread th2 = new Thread(appListener2);
+        th1.start();
+        th2.start();
+        
+        // wait a bit for the receiver thread to get ready
+        Thread.sleep(1000);
+        
+		// now send some events to t1
+        sendEvent(t1.getThingId(), "event1");
+		
+        Thread.sleep(1000);
 
+		// now send some events to t2
+        sendEvent(t2.getThingId(), "event2");
+	
+        Thread.sleep(1000);
+
+        sendEvent(t3.getThingId(), "event3");
+		
+        Thread.sleep(1000);
+        
+        th1.join();
+        th2.join();
+	
+        applicationDao.delete(app.getId());
+	}
+
+	private void sendEvent(String thingId, String data) {
+		Event event = new Event();
+		Map<String, Object> info = new HashMap<String, Object>();
+		info.put("test", data);
+		event.setEventId(null);
+		event.setInfo(info);
+		event.setServerTimestamp(System.currentTimeMillis());
+		event.setThingId(thingId);
+		eventService.create(event, null, true);		
+	}
+	
+	/**
+	 * Listen for 3 test events.
+	 * 
+	 * @author mike
+	 *
+	 */
+	private class EventListener implements Runnable {
+		private String appId;
+		
+		public EventListener(String appId) {
+			this.appId = appId;
+		}
+      	public void run() {
+    		String thing1Id = TestEventService.this.t1.getThingId();
+    		String thing2Id = TestEventService.this.t2.getThingId();
+    		String thing3Id = TestEventService.this.t3.getThingId();
+			Map<String, String> params = new HashMap<String, String>();
+			EventService eventService = TestEventService.this.eventService;
+			
+			// test getting all three events
+	        System.out.println("thread waiting");
+	        List<Event> events = eventService.getEvents(appId, thing1Id, params, 3600, Filter.ALL);
+			System.out.println("thread got event from "+events.get(0).getThingId());
+			assertEquals(thing1Id, events.get(0).getThingId());
+
+			System.out.println("thread waiting");
+			events = eventService.getEvents(appId, thing1Id, params, 3600,
+					Filter.ALL);
+			System.out.println("thread got event from "+events.get(0).getThingId());
+			assertEquals(thing2Id, events.get(0).getThingId());
+
+			System.out.println("thread waiting");
+			events = eventService.getEvents(appId, thing1Id, params, 3600, Filter.ALL);
+			System.out.println("thread got event from "+events.get(0).getThingId());
+			assertEquals(thing3Id, events.get(0).getThingId());
+    	}
+	}
 }

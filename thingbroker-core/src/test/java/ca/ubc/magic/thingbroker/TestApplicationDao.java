@@ -79,8 +79,6 @@ public class TestApplicationDao {
 		assertEquals(app.getName(), readApp.getName());
 	}
 	
-	
-	
 	@After
 	public void teardown() throws Exception {
 		List<Application> apps = applicationDao.findAll(0, Integer.MAX_VALUE);
