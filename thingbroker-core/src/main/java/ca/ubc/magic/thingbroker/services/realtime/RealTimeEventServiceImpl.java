@@ -34,6 +34,9 @@ import ca.ubc.magic.thingbroker.services.interfaces.RealTimeEventService;
 public class RealTimeEventServiceImpl implements RealTimeEventService, DisposableBean {
 	private static final Log logger = LogFactory.getLog(RealTimeEventService.class);
 
+	// at most hang waiting for data for 15 seconds before returning
+	final static int MAX_WAIT_TIME = 15;
+	
 	/**
 	 * things that the system is currently tracking for real time events.
 	 * thing id to ThingEventHandler
@@ -65,11 +68,21 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 	
 	@Override
 	public List<Event> getEvents(String appId, Thing thing, int waitTime, Filter filter) {
+		
 		// if we got here, we know we need real time events
+		
+		// we use an empty string for the default application id 
+		appId = appId == null?"":appId;
+		waitTime = Math.max(waitTime, MAX_WAIT_TIME);
+		
+		// we keep a ThingHandler for every 'appId:thingId' so that every app-thing pair gets its own
+		// JMS subscriptions and queues.  The subscriptions (all, following, thing-only) are app-specific.
+		String appThingId = appId+":"+thing.getThingId();
+
 		// first see if we are alreading getting real time messages for the thing
-		ThingEventHandler thingHandler = things.get(thing.getThingId());
+		ThingEventHandler thingHandler = things.get(appThingId);
+
 		Set<String> following = new HashSet<String>(thing.getFollowing());
-		String thingId = thing.getThingId();
 		
 		// first figure out what things we should be following or not
 		switch (filter) {
@@ -81,11 +94,11 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 			following.clear();
 		case ALL:
 			// add ourself
-			following.add(thingId);
+			following.add(thing.getThingId());
 			break;
 		}
 		// 'following' now contains the things we should be getting events from from this thingHandler
-		logger.debug("get real time:"+thingId+" on "+following);
+		logger.debug("get real time events for:"+appThingId+" on "+following);
 		
 		Session session;
 		try {
@@ -99,7 +112,7 @@ public class RealTimeEventServiceImpl implements RealTimeEventService, Disposabl
 				session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 				thingHandler = new ThingEventHandler(session);
 				// add it for next time
-				things.put(thingId, thingHandler);
+				things.put(appThingId, thingHandler);
 			}
 			// sync up the followers -- all of the things we are following
 			// this will create or remove message consumers for each

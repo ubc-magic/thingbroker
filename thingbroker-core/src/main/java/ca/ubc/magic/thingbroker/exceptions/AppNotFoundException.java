@@ -8,8 +8,8 @@ package ca.ubc.magic.thingbroker.exceptions;
  *
  */
 @SuppressWarnings("serial")
-public class ApplicationNotFound extends ThingBrokerException {
-	public ApplicationNotFound(String msg, Throwable cause) {
+public class AppNotFoundException extends ThingBrokerException {
+	public AppNotFoundException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 }

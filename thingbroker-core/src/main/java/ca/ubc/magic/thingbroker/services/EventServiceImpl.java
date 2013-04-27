@@ -147,8 +147,8 @@ public class EventServiceImpl implements EventService {
 
 		if (appId != null) {
 			a = applicationDao.find(appId);
-//			if (a == null)
-//				throw new ApplicationNotFound();
+			if (a != null)
+				appId = a.getId();
 		}
 		// do a query for past events first
 		List<Event> events = eventDao.getEvents(t, queryParams, filter);
@@ -156,7 +156,7 @@ public class EventServiceImpl implements EventService {
 		if (events.size() > 0)
 			return events;
 		
-		return realTimeEventService.getEvents(a.getId(), t, waitTime, filter);
+		return realTimeEventService.getEvents(appId, t, waitTime, filter);
 	}
 	
 	/**

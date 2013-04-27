@@ -34,7 +34,7 @@ public class ThingEventHandler implements MessageListener {
 	private static final int QUEUE_CAPACITY = 200;
 	// time in seconds to keep this event handler around since we last called real time get events
 	// this should be much longer than a typical wait time on long polling!
-	private static final int EXPIRY_TIME = 300;	// 5 minutes
+	private static final int EXPIRY_TIME = 60;	// 60 seconds between long polling calls otherwise buffers may be dumped.
 
 	private Map<String, MessageConsumer> following;
 	

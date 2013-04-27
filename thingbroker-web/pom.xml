@@ -13,7 +13,7 @@
 	<url>http://www.magic.ubc.ca</url>
 	<properties>
 		<java-version>1.6</java-version>
-		<org.springframework-version>3.2.1.RELEASE</org.springframework-version>
+		<org.springframework-version>3.2.2.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.9</org.aspectj-version>
 		<org.slf4j-version>1.5.10</org.slf4j-version>
 	</properties>
@@ -60,7 +60,7 @@
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-webmvc</artifactId>
-		    <version>3.2.2.BUILD-20130301.213134-87</version>
+		    <version>${org.springframework-version}</version>
 		</dependency>
 
 				

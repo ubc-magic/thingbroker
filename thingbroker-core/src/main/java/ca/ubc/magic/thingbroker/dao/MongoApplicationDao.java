@@ -9,13 +9,14 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import ca.ubc.magic.thingbroker.exceptions.AppNotFoundException;
 import ca.ubc.magic.thingbroker.model.Application;
 
 /**
  * @author mike
  *
  */
-public class MongoApplicationDao implements GenericDao<Application> {
+public class MongoApplicationDao implements ApplicationDao {
 	
 	private final MongoOperations mongoOperations;
 	
@@ -61,7 +62,10 @@ public class MongoApplicationDao implements GenericDao<Application> {
 	 */
 	@Override
 	public Application find(String id) {
-		return this.mongoOperations.findById(id, Application.class, applicationCollection);
+		Application a = this.mongoOperations.findById(id, Application.class, applicationCollection);
+		if (a == null)
+			throw new AppNotFoundException("Application: "+id+" not found", null);
+		return a;
 	}
 
 	/* (non-Javadoc)
