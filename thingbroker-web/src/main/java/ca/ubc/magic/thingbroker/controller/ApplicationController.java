@@ -23,6 +23,10 @@ public class ApplicationController {
 
 	private ApplicationDao applicationDao;
 	
+	public ApplicationController(ApplicationDao applicationDao) {
+		this.applicationDao = applicationDao;
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, consumes="application/json", produces = "application/json")
 	@ResponseBody 
 	public Object createApp(@RequestBody Application app) {
@@ -37,7 +41,7 @@ public class ApplicationController {
 	
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public List<Application> getAllApplication(@RequestParam(required=false) Integer offset,
+	public List<Application> getAllApplications(@RequestParam(required=false) Integer offset,
 			@RequestParam(required=false) Integer limit) {
 		offset = offset==null?0:offset;
 		limit = limit==null?100:limit;

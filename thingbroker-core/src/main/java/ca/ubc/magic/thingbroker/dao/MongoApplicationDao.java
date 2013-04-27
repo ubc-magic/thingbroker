@@ -5,6 +5,7 @@ package ca.ubc.magic.thingbroker.dao;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -53,7 +54,7 @@ public class MongoApplicationDao implements ApplicationDao {
 	 */
 	@Override
 	public void delete(String id) {
-		Query q = new Query(Criteria.where("id").is(id));
+		Query q = new Query(Criteria.where("_id").is(new ObjectId(id)));
 		this.mongoOperations.remove(q, applicationCollection);
 	}
 

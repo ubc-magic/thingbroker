@@ -31,6 +31,8 @@ import ca.ubc.magic.utils.Messages;
 public class EventController {
 	private static final Logger logger = LoggerFactory.getLogger(EventController.class);
 
+	final static int MAX_WAIT_TIME = 10;
+	
 	private final EventService eventService;
 	private final Messages messages;
 
@@ -91,7 +93,7 @@ public class EventController {
 			Event event = new Event();
 			event.setServerTimestamp(System.currentTimeMillis());
 			event.setThingId(thingId);
-			return eventService.create(event, getEventDataArray(request),keepStored);
+			return eventService.create(event, getEventDataArray(request), keepStored);
 		}		
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();
@@ -208,13 +210,16 @@ public class EventController {
 		try {
 			Event event = new Event();
 			event.setThingId(thingId);
-			int waitTime = params.get("waitTime") == null?10:Integer.parseInt(params.get("waitTime"));			
 			
-			// for backward compatibility
+			int waitTime = params.get("waitTime") == null?MAX_WAIT_TIME:Integer.parseInt(params.get("waitTime"));			
+			String appId = params.get("appId");
+			
+			// for backward compatibility with "followingOnly" flag
 			Filter filter = params.get("followingOnly") == null?Filter.ALL:Filter.FOLLOWING_ONLY;
+			
 			// filter parameter
 			filter = params.get("filter") == null?Filter.ALL:Filter.fromString(params.get("filter"));
-			return eventService.getEvents(thingId, params, waitTime, filter);
+			return eventService.getEvents(appId, thingId, params, waitTime, filter);
 		}		
 		catch(ThingBrokerException ex) {
 			ex.printStackTrace();
