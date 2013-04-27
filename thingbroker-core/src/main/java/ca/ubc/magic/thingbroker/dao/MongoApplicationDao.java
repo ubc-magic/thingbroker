@@ -65,7 +65,7 @@ public class MongoApplicationDao implements ApplicationDao {
 	public Application find(String id) {
 		Application a = this.mongoOperations.findById(id, Application.class, applicationCollection);
 		if (a == null)
-			throw new AppNotFoundException("Application: "+id+" not found", null);
+			throw new AppNotFoundException("Application: "+id+" not found");
 		return a;
 	}
 

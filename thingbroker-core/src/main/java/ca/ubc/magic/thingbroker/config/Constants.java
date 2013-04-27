@@ -14,6 +14,7 @@ public class Constants {
 	public static Integer CODE_INVALID_EVENT_INFO_FIELD = 8;
 	public static Integer CODE_SERVER_TIMESTAMP_NOT_PROVIDED = 9;
 	public static Integer CODE_SERVER_TIMESTAMP_OUTDATED = 10;
+	public static Integer CODE_BAD_APPLICATION_ID = 11;
 	public static Integer CODE_INTERNAL_ERROR = 500;
 	
 	
