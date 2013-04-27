@@ -60,12 +60,14 @@ public interface EventService {
 	/**
 	 * Get events associated with a thing
 	 * 
+	 * @param appId the application id requesting events
 	 * @param thingId the thing
 	 * @param queryParams query parameters: start, end, before, after, limit, offset
 	 * @param waitTime time to wait in seconds for real time events
 	 * @param followingOnly only get events from things the thing is following
 	 * @return
 	 */
+	public List<Event> getEvents(String appId, String thingId, Map<String, String> queryParams, int waitTime, Filter filter);
 	public List<Event> getEvents(String thingId, Map<String, String> queryParams, int waitTime, Filter filter);
 
 	public Content retrieveEventData(Content eventData) throws Exception;

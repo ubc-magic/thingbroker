@@ -46,9 +46,9 @@
 		<beans:constructor-arg ref="thingService" />
 	</beans:bean>
 
-	<beans:bean id="contentController"
-		class="ca.ubc.magic.thingbroker.controller.ContentController">
-		<beans:constructor-arg ref="eventService" />
+	<beans:bean id="applicationController"
+		class="ca.ubc.magic.thingbroker.controller.ApplicationController">
+		<beans:constructor-arg ref="applicationDao" />
 	</beans:bean>
 		
 	<beans:bean id="homeController"
